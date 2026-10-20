@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="QuietDeck TV mark">
+  <rect width="160" height="160" rx="38" fill="#142d42"/>
+  <circle cx="80" cy="75" r="42" fill="none" stroke="#dcecf4" stroke-width="5"/>
+  <path d="M48 89h64M48 100h64" stroke="#dcecf4" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="80" cy="61" r="12" fill="#c0dbe7"/>
+  <path d="M67 130h26" stroke="#9abacb" stroke-width="4" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,35 @@
+name: Bug report
+description: Report a reproducible problem in QuietDeck TV.
+labels: [bug]
+body:
+  - type: input
+    id: version
+    attributes:
+      label: QuietDeck version
+      placeholder: 1.1.0
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: TV model and Android version
+      description: Do not include serial numbers, private IPs or account details.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshots or relevant logs
+      description: Remove pairing codes, private network details, account data and other personal information.

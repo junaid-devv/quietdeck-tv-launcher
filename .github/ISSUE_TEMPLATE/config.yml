@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Installation and troubleshooting
+    url: https://github.com/junaid-devv/quietdeck-tv-launcher/blob/main/docs/FAQ.md
+    about: Read common fixes before opening an issue.

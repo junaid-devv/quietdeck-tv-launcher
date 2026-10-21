@@ -7,7 +7,7 @@ This is a **release candidate**, not a production-approved Play release. Do not 
 - Native Android TV app, API 23 minimum / target 35; TV-only feature declaration.
 - R8 optimization and resource shrinking for release APK/AAB.
 - English title, short description and full description under `en-US/`.
-- Original logo, 512×512 RGBA store icon, 1024×500 feature graphic, 1280×720 store TV banner. Runtime TV banner is separately 320×180.
+- Original logo, 512Ã—512 RGBA store icon, 1024Ã—500 feature graphic, 1280Ã—720 store TV banner. Runtime TV banner is separately 320Ã—180.
 - In-app privacy policy and public HTML source in `docs/privacy.html`.
 - Unit tests and emulator remote/lifecycle/persistence checks; see `docs/RELEASE-READINESS.md` for results and limits.
 
@@ -24,7 +24,7 @@ This is a **release candidate**, not a production-approved Play release. Do not 
 
 Run a closed test with at least **12 testers opted in continuously for 14 days**, collect meaningful feedback, fix defects, then apply for production access. This is a real participation requirement; CI tests and a prepared AAB do not fulfill it. Check the current Console instructions when starting the test.
 
-## Proposed Data safety responses — review against the actual build
+## Proposed Data safety responses â€” review against the actual build
 
 The launcher has no INTERNET permission, network client, ads, accounts or third-party runtime SDKs. No user data is collected or shared off-device by QuietDeck. Installed app metadata, configuration and recent app identifiers are processed locally. User-selected file providers may independently use cloud services; exported files remain user-controlled. The privacy policy explains this distinction.
 
@@ -36,6 +36,6 @@ The launcher has no INTERNET permission, network client, ads, accounts or third-
 
 ## Release operation
 
-Use a new, increasing versionCode for every accepted upload. Candidate code is 20. If 20 has already been consumed, increase it before rebuilding. Store artifacts are under `play/en-US/graphics/`; repository APKs and keys are ignored. Keep R8 mapping files per released build. Use staged rollout after approval, monitor Android vitals and feedback, and halt rollout for startup crashes, focus traps or launcher recovery failures.
+Use a new, increasing versionCode for every accepted upload. Candidate code is 21. If 21 has already been consumed, increase it before rebuilding. Store artifacts are under `play/en-US/graphics/`; repository APKs and keys are ignored. Keep R8 mapping files per released build. Use staged rollout after approval, monitor Android vitals and feedback, and halt rollout for startup crashes, focus traps or launcher recovery failures.
 
 Official references: [TV quality](https://developer.android.com/docs/quality-guidelines/tv-app-quality), [TV distribution](https://developer.android.com/training/tv/publishing/distribute), [TV target API requirements](https://developer.android.com/google/play/requirements/target-sdk), [personal-account testing](https://support.google.com/googleplay/android-developer/answer/14151465), [user data and privacy](https://support.google.com/googleplay/android-developer/answer/10144311), [Play App Signing](https://developer.android.com/studio/publish/app-signing).

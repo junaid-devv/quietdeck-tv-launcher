@@ -5,9 +5,9 @@
 
 **QuietDeck is a free, open-source Android TV launcher with favourites, app search and personal collections.** A calm home screen, native remote controls, and local customization without ads, accounts, analytics or internet permission.
 
-**2.0.0-rc1 is a release candidate.** The native interface and performance architecture have changed substantially. Physical TV qualification and Google Play testing remain required. The existing stable v1.1.0 release has a different interface; its physical-device results do not certify v2.
+**2.0.0-rc2 is a release candidate.** The original calm Home design is restored: compact Home / Apps / Appearance / Settings navigation, a time-based greeting, favourites with labels below their banners and three small shortcuts. Search, collections and recent apps live on Apps and Settings. The native accessibility and performance work remains. Physical TV qualification and Google Play testing remain required. The stable v1.1.0 physical-device results do not certify this new build.
 
-[Downloads and release notes](https://github.com/junaid-devv/quietdeck-tv-launcher/releases) · [Install and restore](docs/INSTALL.md) · [Build](docs/BUILD.md) · [Readiness and testing](docs/RELEASE-READINESS.md) · [Play handoff](play/PUBLISHING.md)
+[Downloads and release notes](https://github.com/junaid-devv/quietdeck-tv-launcher/releases) Ãƒâ€šÃ‚Â· [Install and restore](docs/INSTALL.md) Ãƒâ€šÃ‚Â· [Build](docs/BUILD.md) Ãƒâ€šÃ‚Â· [Readiness and testing](docs/RELEASE-READINESS.md) Ãƒâ€šÃ‚Â· [Play handoff](play/PUBLISHING.md)
 
 ## A focused Android TV home
 
@@ -45,7 +45,7 @@ Requires **Android TV 6.0 / API 23 or later**. The declared API floor is not a p
 | --- | --- |
 | Arrows | Move between native controls and app tiles; scroll app rows |
 | OK / Enter | Open the selected item |
-| Hold OK, Menu or Info | Open app options; the footer also has a visible App options button |
+| Hold OK, Menu or Info | Open app options; Apps has an App options button; Home exposes it through Settings |
 | Back | Clear search, then return to Home; leave an ordinary launch when already on Home |
 | Home | Open your chosen default Home app, subject to TV firmware |
 
@@ -59,14 +59,14 @@ Use JDK 17 and Android SDK 35 / Build-tools 35.0.0:
 
 On Windows use `gradlew.bat`. Debug builds use `com.still.launcher.debug` and coexist with the release. The production package remains `com.still.launcher`, preserving signed updates and preferences from the original Still prototype. The isolated `showcase` module is only for emulator artwork fixtures.
 
-[Build and signing](docs/BUILD.md) · [Architecture](docs/ARCHITECTURE.md) · [FAQ](docs/FAQ.md) · [Roadmap](docs/ROADMAP.md) · [Contributing](CONTRIBUTING.md) · [Changelog](CHANGELOG.md)
+[Build and signing](docs/BUILD.md) Ãƒâ€šÃ‚Â· [Architecture](docs/ARCHITECTURE.md) Ãƒâ€šÃ‚Â· [FAQ](docs/FAQ.md) Ãƒâ€šÃ‚Â· [Roadmap](docs/ROADMAP.md) Ãƒâ€šÃ‚Â· [Contributing](CONTRIBUTING.md) Ãƒâ€šÃ‚Â· [Changelog](CHANGELOG.md)
 
 ## Privacy and support
 
 The app requests no Android permissions and sends no data to a server. Installed app metadata, preferences and recent activity are processed locally. Read the in-app privacy policy or [public policy source](docs/privacy.html). File providers, Android, Google Play and other apps have their own policies.
 
-[Report an issue or device result](https://github.com/junaid-devv/quietdeck-tv-launcher/issues/new/choose) · [Private security reports](SECURITY.md)
+[Report an issue or device result](https://github.com/junaid-devv/quietdeck-tv-launcher/issues/new/choose) Ãƒâ€šÃ‚Â· [Private security reports](SECURITY.md)
 
 ## License
 
-[MIT](LICENSE), © 2026 Muhammad Junaid. Original QuietDeck branding is included; third-party app artwork belongs to its owners. QuietDeck is independent of Google, Apple, TV manufacturers and streaming services.
+[MIT](LICENSE), Ãƒâ€šÃ‚Â© 2026 Muhammad Junaid. Original QuietDeck branding is included; third-party app artwork belongs to its owners. QuietDeck is independent of Google, Apple, TV manufacturers and streaming services.

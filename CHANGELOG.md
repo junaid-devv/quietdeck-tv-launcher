@@ -1,6 +1,16 @@
 # Changelog
 
-## 2.0.0-rc1 — 2026-10-21
+## 2.0.0-rc2 — 2026-10-21
+
+- Restored the original calm Home layout and blue mountain scenery following design feedback.
+- Replaced oversized navigation boxes with compact text tabs and a selected underline.
+- Restored the date, time-based greeting, favourites, separate app labels and three small shortcuts.
+- Moved search, collections, recent apps and app-options tools off Home; they remain available in Apps and Settings.
+- Preserved native accessibility, proportional artwork, bounded caching, local customization and optimized release builds.
+- Version code 21; signed updates remain compatible with the prior candidate.
+
+
+## 2.0.0-rc1 â€” 2026-10-21
 
 Release candidate; physical TV qualification and Play test-track distribution pending.
 
@@ -13,7 +23,7 @@ Release candidate; physical TV qualification and Play test-track distribution pe
 - Added original QuietDeck Q logo, store graphics and public/in-app privacy policy.
 
 
-## 1.1.0 — 2026-10-20
+## 1.1.0 â€” 2026-10-20
 
 First public release under the **QuietDeck TV** name.
 

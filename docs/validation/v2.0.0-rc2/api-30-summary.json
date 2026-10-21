@@ -1,0 +1,16 @@
+{
+  "package": "com.still.launcher",
+  "model": "AOSP TV on x86",
+  "sdk": "30",
+  "low_ram": "",
+  "page_size": "4096",
+  "cold_start_ms": [
+    1204,
+    2382,
+    2252,
+    1400,
+    2339
+  ],
+  "median_cold_start_ms": 2252,
+  "method": "am force-stop + am start -W, TotalTime; 2s settling; no installed-app data clearing"
+}

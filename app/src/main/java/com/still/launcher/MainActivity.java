@@ -439,13 +439,14 @@ public class MainActivity extends Activity {
         }).setNegativeButton(R.string.close,null).show();
     }
     private void showSettings() {
-        int[] ids = {R.string.choose_favourites, R.string.background, R.string.grid_size, R.string.text_size,
+        int[] ids = {R.string.options, R.string.choose_favourites, R.string.background, R.string.grid_size, R.string.text_size,
                 R.string.high_contrast, R.string.local_wallpaper, R.string.remove_wallpaper, R.string.restore_hidden,
                 R.string.default_home, R.string.settings, R.string.refresh, R.string.export_config, R.string.import_config,
-                R.string.clear_recent, R.string.privacy, R.string.about, R.string.options, R.string.collections, R.string.recent};
+                R.string.clear_recent, R.string.privacy, R.string.about, R.string.collections, R.string.recent};
+        int[] actions = {16, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18};
         String[] labels = new String[ids.length]; for (int i = 0; i < ids.length; i++) labels[i] = s(ids[i]);
         new AlertDialog.Builder(this).setTitle(R.string.settings).setItems(labels, (d, which) -> {
-            switch (which) {
+            switch (actions[which]) {
                 case 0: chooseFavourites(); break;
                 case 1: chooseSetting(R.string.background, "scene", new int[]{R.string.blue_hour, R.string.warm_dusk, R.string.midnight}, prefs.scene()); break;
                 case 2: chooseSetting(R.string.grid_size, "density", new int[]{R.string.large_tiles, R.string.balanced_tiles, R.string.compact_tiles}, prefs.density()); break;

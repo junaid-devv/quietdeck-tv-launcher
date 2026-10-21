@@ -95,7 +95,20 @@ public class LauncherDeviceTest {
                 activity.onTrimMemory(android.content.ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW);
                 activity.findViewById(R.id.nav_home).performClick();
             });
-            awaitArtwork(scenario); screenshot("home.png");
+            awaitArtwork(scenario);
+            scenario.onActivity(activity -> {
+                GridView grid = activity.findViewById(R.id.app_grid);
+                for (int i = 0; i < grid.getChildCount(); i++) {
+                    android.view.ViewGroup tile = (android.view.ViewGroup) grid.getChildAt(i);
+                    android.widget.TextView label = (android.widget.TextView) tile.getChildAt(1);
+                    android.graphics.Rect visible = new android.graphics.Rect();
+                    assertTrue("Favourite label is clipped", label.getGlobalVisibleRect(visible));
+                    assertEquals(label.getHeight(), visible.height());
+                    assertTrue(label.getText().length() > 0);
+                    assertEquals(255, android.graphics.Color.alpha(label.getCurrentTextColor()));
+                }
+            });
+            screenshot("home.png");
         }
     }
     @Test public void visibleAppOptionsHideAndSettingsRestoreAnApp() throws Exception {

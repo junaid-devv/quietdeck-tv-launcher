@@ -55,9 +55,8 @@ final class AppGridAdapter extends BaseAdapter {
             holder.image.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
             holder.root.addView(holder.image, new LinearLayout.LayoutParams(-1, 0, 1));
             holder.label = new TextView(context); holder.label.setGravity(Gravity.CENTER);
-            holder.label.setTextColor(new android.content.res.ColorStateList(new int[][]{
-                    {android.R.attr.state_selected}, {}},new int[]{0xFFF4F8FA, 0xFF93ABBD}));
-            holder.label.setDuplicateParentStateEnabled(true); holder.label.setSingleLine(true);
+            holder.label.setTextColor(0xFFB8CDD9);
+            holder.label.setMaxLines(1); holder.label.setHorizontallyScrolling(false);
             holder.label.setEllipsize(TextUtils.TruncateAt.END);
             holder.label.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
             holder.label.setPadding(0, dp(7), 0, 0); holder.label.setMinHeight(dp(27));
@@ -68,6 +67,7 @@ final class AppGridAdapter extends BaseAdapter {
         int parentWidth = parent.getWidth() > 0 ? parent.getWidth() : context.getResources().getDisplayMetrics().widthPixels - dp(112);
         int tileWidth = (parentWidth - dp(6) - dp(9) * (columns - 1)) / columns;
         int labelHeight = Math.max(dp(27), Math.round(new int[]{12,14,17}[prefs.textSize()] * context.getResources().getDisplayMetrics().scaledDensity * 1.5f) + dp(7));
+        holder.label.setLayoutParams(new LinearLayout.LayoutParams(-1, labelHeight));
         holder.root.setLayoutParams(new AbsListView.LayoutParams(-1, Math.max(dp(40), tileWidth * 9 / 16) + labelHeight + dp(6)));
         AppEntry app = getItem(position);
         holder.label.setText(app.label); holder.label.setTextSize(new int[]{12, 14, 17}[prefs.textSize()]);

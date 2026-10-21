@@ -76,13 +76,15 @@ final class PreferencesStore {
         return ConfigRules.packages(ids);
     }
     String exportConfig() throws JSONException {
-        return new JSONObject().put("schema", 2).put("favourites", new JSONArray(favourites()))
+        String text = new JSONObject().put("schema", 2).put("favourites", new JSONArray(favourites()))
                 .put("hidden", new JSONArray(hidden())).put("groups", groupJson(groups()))
                 .put("scene", scene()).put("density", density()).put("textSize", textSize())
                 .put("contrast", contrast()).toString(2);
+        if (text.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > ConfigRules.MAX_BYTES) throw new IllegalArgumentException();
+        return text;
     }
     void importConfig(String text) throws JSONException {
-        if (text.length() > ConfigRules.MAX_BYTES) throw new IllegalArgumentException();
+        if (text.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > ConfigRules.MAX_BYTES) throw new IllegalArgumentException();
         JSONObject value = new JSONObject(text);
         if (value.getInt("schema") != 2) throw new IllegalArgumentException();
         List<String> favourites = readArray(value.getJSONArray("favourites"));

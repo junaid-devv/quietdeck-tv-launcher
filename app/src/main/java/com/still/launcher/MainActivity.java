@@ -198,6 +198,7 @@ public class MainActivity extends Activity {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
         main.removeCallbacks(clockTick); main.post(clockTick);
+        if (wallpaper == null && !prefs.raw.getString("wallpaper", "").isEmpty()) loadWallpaper();
         if (dirty || !loaded) refreshApps();
     }
     @Override protected void onPause() {
@@ -310,12 +311,12 @@ public class MainActivity extends Activity {
     }
     private void chooseFavourites() {
         if (apps.isEmpty()) { showPage("apps", ""); return; }
-        List<String> chosen = prefs.favourites();
-        String[] labels = new String[apps.size()]; boolean[] checked = new boolean[apps.size()];
-        for (int i = 0; i < apps.size(); i++) { labels[i] = apps.get(i).label; checked[i] = chosen.contains(apps.get(i).id); }
+        List<String> chosen = prefs.favourites(); List<AppEntry> snapshot = new ArrayList<>(apps);
+        String[] labels = new String[snapshot.size()]; boolean[] checked = new boolean[snapshot.size()];
+        for (int i = 0; i < snapshot.size(); i++) { labels[i] = snapshot.get(i).label; checked[i] = chosen.contains(snapshot.get(i).id); }
         new AlertDialog.Builder(this).setTitle(R.string.choose_favourites)
                 .setMultiChoiceItems(labels, checked, (d, index, enabled) -> {
-                    String id = apps.get(index).id;
+                    String id = snapshot.get(index).id;
                     if (enabled && !chosen.contains(id)) chosen.add(id); else if (!enabled) chosen.remove(id);
                 }).setPositiveButton(R.string.save, (d, w) -> { prefs.favourites(chosen); render(); })
                 .setNegativeButton(R.string.cancel, null).show();

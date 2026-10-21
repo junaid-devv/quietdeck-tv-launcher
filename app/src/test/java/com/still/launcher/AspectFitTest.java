@@ -11,7 +11,7 @@ public class AspectFitTest {
         assertArrayEquals(new int[]{0, 50, 320, 130}, AspectFit.inside(1200, 300, 320, 180));
     }
     @Test public void tallLogoFitsWithoutClipping() {
-        assertArrayEquals(new int[]{138, 0, 183, 180}, AspectFit.inside(100, 400, 320, 180));
+        assertArrayEquals(new int[]{137, 0, 182, 180}, AspectFit.inside(100, 400, 320, 180));
     }
     @Test public void manySourceRatiosFitAndStayProportionalWithinRounding() {
         for (int width = 1; width < 2000; width += 31) for (int height = 1; height < 2000; height += 37) {

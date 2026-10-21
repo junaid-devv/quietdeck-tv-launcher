@@ -71,6 +71,9 @@ public class LauncherDeviceTest {
                 activity.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_DOWN));
                 assertNotNull(activity.getCurrentFocus());
             });
+            scenario.onActivity(MainActivity::onBackPressed);
+            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+            assertNotEquals(androidx.lifecycle.Lifecycle.State.RESUMED, scenario.getState());
         }
     }
     @Test public void captureRealEmulatorScreensAndTrimMemory() throws Exception {

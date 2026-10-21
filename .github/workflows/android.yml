@@ -52,6 +52,19 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - api: 23
+            target: android-tv
+            arch: x86
+          - api: 30
+            target: android-tv
+            arch: x86
+          - api: 35
+            target: google_apis_ps16k
+            arch: x86_64
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
       - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
@@ -66,9 +79,9 @@ jobs:
       - name: Android TV remote, lifecycle and persistence tests
         uses: reactivecircus/android-emulator-runner@4c44018e59b437e86cdfc41da381398f93ed8808 # v2
         with:
-          api-level: 30
-          target: android-tv
-          arch: x86
+          api-level: ${{ matrix.api }}
+          target: ${{ matrix.target }}
+          arch: ${{ matrix.arch }}
           profile: tv_1080p
           ram-size: 1024M
           heap-size: 128M
@@ -78,14 +91,16 @@ jobs:
             ./gradlew --no-daemon connectedDebugAndroidTest
             adb pull /sdcard/Android/data/com.still.launcher.debug/files/screenshots emulator-screenshots
             adb shell dumpsys meminfo com.still.launcher.debug > emulator-memory.txt
+            adb shell getconf PAGE_SIZE > emulator-page-size.txt
       - name: Upload TV test evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: quietdeck-tv-emulator-evidence
+          name: quietdeck-tv-emulator-api-${{ matrix.api }}
           path: |
             app/build/reports/androidTests/
             app/build/outputs/androidTest-results/
             emulator-screenshots/
             emulator-memory.txt
+            emulator-page-size.txt
           retention-days: 14

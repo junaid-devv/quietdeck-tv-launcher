@@ -28,6 +28,8 @@ public class LauncherDeviceTest {
         context = InstrumentationRegistry.getInstrumentation().getTargetContext();
         PreferencesStore prefs = new PreferencesStore(context);
         prefs.raw.edit().clear().putBoolean("onboarded", true).commit();
+        if (InstrumentationRegistry.getArguments().getString("captureContrast", "false").equals("true"))
+            prefs.raw.edit().putBoolean("contrast", true).putInt("textSize", 2).commit();
         prefs.favourites(Arrays.asList("com.quietdeck.fixture.cinema", "com.quietdeck.fixture.music", "com.quietdeck.fixture.games"));
     }
     @Test public void legacyPreferencesAndImportRoundTripPreserveOrder() throws Exception {
@@ -147,7 +149,7 @@ public class LauncherDeviceTest {
             AccessibilityNodeInfo root = InstrumentationRegistry.getInstrumentation().getUiAutomation().getRootInActiveWindow();
             if (root != null) {
                 for (AccessibilityNodeInfo node : root.findAccessibilityNodeInfosByText(label)) {
-                    if (!label.contentEquals(node.getText() == null ? "" : node.getText())) continue;
+                    if (!label.equalsIgnoreCase(node.getText() == null ? "" : node.getText().toString())) continue;
                     while (!node.isClickable() && node.getParent() != null) node = node.getParent();
                     if (node.performAction(AccessibilityNodeInfo.ACTION_CLICK)) {
                         InstrumentationRegistry.getInstrumentation().waitForIdleSync(); return;
@@ -174,6 +176,7 @@ public class LauncherDeviceTest {
         InstrumentationRegistry.getInstrumentation().getUiAutomation().waitForIdle(250, 5000);
     }
     private void screenshot(String name) throws Exception {
+        name = InstrumentationRegistry.getArguments().getString("captureLabel", "default") + "-" + name;
         Bitmap image = InstrumentationRegistry.getInstrumentation().getUiAutomation().takeScreenshot();
         File folder = new File(context.getExternalFilesDir(null), "screenshots"); assertTrue(folder.exists() || folder.mkdirs());
         try (FileOutputStream out = new FileOutputStream(new File(folder, name))) { assertTrue(image.compress(Bitmap.CompressFormat.PNG, 100, out)); }

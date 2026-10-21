@@ -28,7 +28,8 @@ def graphic(size,title_size):
     return im
 graphic((1024,500),78).save(store/'featureGraphic.png',optimize=True)
 graphic((1280,640),96).save(brand/'social-preview.png',optimize=True)
-(root/'app/src/main/res/drawable-xhdpi').mkdir(parents=True,exist_ok=True)
-graphic((640,360),48).resize((320,180),Image.Resampling.LANCZOS).save(root/'app/src/main/res/drawable-xhdpi/tv_banner.png',optimize=True)
+for density, width in [('mdpi',160),('hdpi',240),('xhdpi',320),('xxhdpi',480)]:
+    folder=root/('app/src/main/res/drawable-'+density); folder.mkdir(parents=True,exist_ok=True)
+    graphic((640,360),48).resize((width,width*9//16),Image.Resampling.LANCZOS).save(folder/'tv_banner.png',optimize=True)
 graphic((1280,720),96).save(store/'tvBanner.png',optimize=True)
 print('Brand assets exported; generated concept retained separately from lightweight vector runtime icon.')

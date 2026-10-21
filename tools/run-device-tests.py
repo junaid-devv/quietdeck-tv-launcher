@@ -66,11 +66,14 @@ print(result)
 if screenshots < 2: raise SystemExit('Missing required development screenshots')
 if args.display_checks:
     try:
-        for label, size, density, scale in [('720p','1280x720','213','1.0'), ('4k','3840x2160','640','1.0'),
+        # TV non-native-4K windows retain a 1080p logical surface. Keep the
+        # TV's 320 dpi logical density when exercising a 2160p output mode.
+        for label, size, density, scale in [('720p','1280x720','213','1.0'), ('4k-output','3840x2160','320','1.0'),
                                            ('large-text-contrast','1920x1080','320','1.3')]:
             adb('shell','wm','size',size)
             adb('shell','wm','density',density)
             adb('shell','settings','put','system','font_scale',scale)
+            (args.output/f'{label}-display.txt').write_text(adb('shell','dumpsys','display'),encoding='utf-8')
             capture=adb('shell','am','instrument','-w','-r','-e','class',
                 'com.still.launcher.LauncherDeviceTest#captureRealEmulatorScreensAndTrimMemory',
                 '-e','captureLabel',label,'-e','captureContrast',str(scale!='1.0').lower(),

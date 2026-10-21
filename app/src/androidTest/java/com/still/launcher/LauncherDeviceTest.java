@@ -36,17 +36,17 @@ public class LauncherDeviceTest {
         PreferencesStore store = new PreferencesStore(context, "test-config"); store.raw.edit().clear().commit();
         store.raw.edit().putString("favourites", "tv.alpha.app|tv.beta.app").putStringSet("hidden", Collections.singleton("tv.hidden.app")).commit();
         store.setGroup("Family", Arrays.asList("tv.beta.app", "tv.alpha.app"));
-        store.setting("density", 2); String backup = store.exportConfig();
+        store.setting("density", 1); String backup = store.exportConfig();
         store.raw.edit().clear().commit(); store.importConfig(backup);
         assertEquals(Arrays.asList("tv.alpha.app", "tv.beta.app"), store.favourites());
         assertTrue(store.hidden().contains("tv.hidden.app"));
         assertEquals(Arrays.asList("tv.beta.app", "tv.alpha.app"), store.groups().get("Family"));
-        assertEquals(6, store.columns()); assertFalse(backup.contains("wallpaper")); assertFalse(backup.contains("recent"));
+        assertEquals(5, store.columns()); assertFalse(backup.contains("wallpaper")); assertFalse(backup.contains("recent"));
     }
     @Test public void invalidBackupCannotPartiallyReplaceExistingSettings() throws Exception {
         PreferencesStore store = new PreferencesStore(context, "test-invalid"); store.raw.edit().clear().commit();
         store.favourites(Collections.singletonList("tv.keep.app")); String before = store.exportConfig();
-        try { store.importConfig(before.replace("\"density\": 1", "\"density\": 99")); fail("Invalid layout accepted"); }
+        try { store.importConfig(before.replace("\"density\": 2", "\"density\": 99")); fail("Invalid layout accepted"); }
         catch (IllegalArgumentException expected) { assertEquals(before, store.exportConfig()); }
     }
     @Test public void recentAppsAreBoundedDeduplicatedAndClearable() {
@@ -101,7 +101,8 @@ public class LauncherDeviceTest {
     @Test public void visibleAppOptionsHideAndSettingsRestoreAnApp() throws Exception {
         try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
             awaitArtwork(scenario);
-            scenario.onActivity(activity -> activity.findViewById(R.id.app_options).performClick());
+            scenario.onActivity(activity -> activity.findViewById(R.id.nav_settings).performClick());
+            clickText(context.getString(R.string.options));
             clickText(context.getString(R.string.hide_app));
             assertTrue(new PreferencesStore(context).hidden().contains("com.quietdeck.fixture.cinema"));
             scenario.onActivity(activity -> {
@@ -155,6 +156,21 @@ public class LauncherDeviceTest {
                 }
                 assertTrue("Disabled app remained visible", removed.get());
             } finally { shell("pm enable --user 0 com.quietdeck.fixture.cinema"); }
+        }
+    }
+    @Test public void homeKeepsAdvancedToolsOffTheSurface() throws Exception {
+        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
+            awaitArtwork(scenario);
+            scenario.onActivity(activity -> {
+                assertFalse(activity.findViewById(R.id.app_search).isShown());
+                assertFalse(activity.findViewById(R.id.nav_collections).isShown());
+                assertFalse(activity.findViewById(R.id.app_options).isShown());
+                assertTrue(activity.findViewById(R.id.nav_appearance).isShown());
+                activity.findViewById(R.id.nav_apps).performClick();
+                assertTrue(activity.findViewById(R.id.app_search).isShown());
+                assertTrue(activity.findViewById(R.id.nav_collections).isShown());
+                assertTrue(activity.findViewById(R.id.app_options).isShown());
+            });
         }
     }
     private void shell(String command) throws Exception {

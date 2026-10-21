@@ -28,8 +28,8 @@ final class PreferencesStore {
     void hide(String id) { Set<String> ids = hidden(); ids.add(id); raw.edit().putStringSet("hidden", ids).apply(); }
     void restoreHidden() { raw.edit().remove("hidden").apply(); }
     int scene() { return Math.max(0, Math.min(2, raw.getInt("scene", 0))); }
-    int density() { return Math.max(0, Math.min(2, raw.getInt("density", 1))); }
-    int textSize() { return Math.max(0, Math.min(2, raw.getInt("textSize", 1))); }
+    int density() { return Math.max(0, Math.min(2, raw.getInt("density", 2))); }
+    int textSize() { return Math.max(0, Math.min(2, raw.getInt("textSize", 0))); }
     int columns() { return new int[]{4, 5, 6}[density()]; }
     boolean contrast() { return raw.getBoolean("contrast", false); }
     void setting(String key, int value) { raw.edit().putInt(key, value).apply(); }

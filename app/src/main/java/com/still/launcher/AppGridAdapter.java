@@ -34,30 +34,41 @@ final class AppGridAdapter extends BaseAdapter {
         GradientDrawable drawable = new GradientDrawable(); drawable.setColor(color); drawable.setCornerRadius(12);
         if (stroke != 0) drawable.setStroke(3, stroke); return drawable;
     }
+    static GradientDrawable pill(int color) {
+        GradientDrawable drawable = shape(color, 0); drawable.setCornerRadius(100); return drawable;
+    }
     private static final class Holder { LinearLayout root; ImageView image; TextView label; }
     @Override public View getView(int position, View convert, ViewGroup parent) {
         Holder holder;
         if (convert == null) {
             holder = new Holder(); holder.root = new LinearLayout(context); holder.root.setOrientation(LinearLayout.VERTICAL);
-            holder.root.setPadding(dp(8), dp(7), dp(8), dp(7));
+            holder.root.setPadding(dp(3), dp(3), dp(3), 0);
             StateListDrawable states = new StateListDrawable();
-            states.addState(new int[]{android.R.attr.state_selected}, shape(0xFF23434F, 0xFFACF0E8));
-            states.addState(new int[]{android.R.attr.state_pressed}, shape(0xFF23434F, 0xFFACF0E8));
-            states.addState(new int[]{}, shape(prefs.contrast() ? 0xFF050A10 : 0xDF11212E, 0x30394D5C));
-            holder.root.setBackground(states);
-            holder.root.setLayoutParams(new AbsListView.LayoutParams(-1, dp(116)));
+            states.addState(new int[]{android.R.attr.state_selected}, shape(0xFF203345, 0xFFF3F7FA));
+            states.addState(new int[]{android.R.attr.state_pressed}, shape(0xFF203345, 0xFFF3F7FA));
+            states.addState(new int[]{}, shape(prefs.contrast() ? 0xFF050A10 : 0xFF182B3C, 0));
             holder.root.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
             holder.image = new ImageView(context); holder.image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            holder.image.setBackground(states); holder.image.setClipToOutline(true);
+            holder.image.setDuplicateParentStateEnabled(true);
+            holder.image.setPadding(dp(2), dp(2), dp(2), dp(2));
             holder.image.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
             holder.root.addView(holder.image, new LinearLayout.LayoutParams(-1, 0, 1));
             holder.label = new TextView(context); holder.label.setGravity(Gravity.CENTER);
-            holder.label.setTextColor(Color.WHITE); holder.label.setSingleLine(true);
+            holder.label.setTextColor(new android.content.res.ColorStateList(new int[][]{
+                    {android.R.attr.state_selected}, {}},new int[]{0xFFF4F8FA, 0xFF93ABBD}));
+            holder.label.setDuplicateParentStateEnabled(true); holder.label.setSingleLine(true);
             holder.label.setEllipsize(TextUtils.TruncateAt.END);
             holder.label.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-            holder.label.setMinHeight(dp(27));
+            holder.label.setPadding(0, dp(7), 0, 0); holder.label.setMinHeight(dp(27));
             holder.root.addView(holder.label, new LinearLayout.LayoutParams(-1, -2));
             holder.root.setTag(holder); convert = holder.root;
         } else holder = (Holder) convert.getTag();
+        int columns = prefs.columns();
+        int parentWidth = parent.getWidth() > 0 ? parent.getWidth() : context.getResources().getDisplayMetrics().widthPixels - dp(112);
+        int tileWidth = (parentWidth - dp(6) - dp(9) * (columns - 1)) / columns;
+        int labelHeight = Math.max(dp(27), Math.round(new int[]{12,14,17}[prefs.textSize()] * context.getResources().getDisplayMetrics().scaledDensity * 1.5f) + dp(7));
+        holder.root.setLayoutParams(new AbsListView.LayoutParams(-1, Math.max(dp(40), tileWidth * 9 / 16) + labelHeight + dp(6)));
         AppEntry app = getItem(position);
         holder.label.setText(app.label); holder.label.setTextSize(new int[]{12, 14, 17}[prefs.textSize()]);
         holder.root.setContentDescription(app.label); artwork.bind(app, holder.image);

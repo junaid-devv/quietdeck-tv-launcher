@@ -69,7 +69,9 @@ public class MainActivity extends Activity {
     private GridView grid;
     private AppGridAdapter adapter;
     private EditText search;
-    private TextView title, subtitle, count, clock, empty;
+    private TextView title, subtitle, count, clock, empty, date, section, instruction;
+    private LinearLayout toolbar, shortcuts;
+    private FrameLayout content;
     private Button favouritesButton, recentButton;
     private boolean lowRam, resumed, dirty = true, loaded;
     private volatile boolean destroyed;
@@ -79,7 +81,7 @@ public class MainActivity extends Activity {
     private final Runnable clockTick = new Runnable() {
         @Override public void run() {
             if (!resumed || destroyed) return;
-            clock.setText(android.text.format.DateFormat.getTimeFormat(MainActivity.this).format(new java.util.Date()));
+            updateTime();
             main.postDelayed(this, 60000 - System.currentTimeMillis() % 60000);
         }
     };
@@ -117,61 +119,99 @@ public class MainActivity extends Activity {
         TextView view = new TextView(this); view.setText(value); view.setTextSize(size); view.setTextColor(color); return view;
     }
     private Button button(int label, Runnable action) {
-        Button button = new Button(this); button.setText(label); button.setAllCaps(false); button.setTextSize(13);
+        Button button = new Button(this); button.setText(label); button.setAllCaps(false); button.setTextSize(12);
         button.setFocusableInTouchMode(true);
-        button.setTextColor(Color.WHITE); button.setMinHeight(0); button.setMinimumHeight(0); button.setMinWidth(0);
-        button.setPadding(dp(14), dp(6), dp(14), dp(6));
+        button.setTextColor(new android.content.res.ColorStateList(new int[][]{
+                {android.R.attr.state_focused}, {android.R.attr.state_pressed}, {}},
+                new int[]{0xFF162A3B, 0xFF162A3B, 0xFFBCCDD9})); button.setMinHeight(0); button.setMinimumHeight(0); button.setMinWidth(0);
+        button.setPadding(dp(12), dp(3), dp(12), dp(3));
         StateListDrawable background = new StateListDrawable();
-        background.addState(new int[]{android.R.attr.state_focused}, AppGridAdapter.shape(0xFF315B64, 0xFFB6EFE8));
-        background.addState(new int[]{android.R.attr.state_pressed}, AppGridAdapter.shape(0xFF315B64, 0xFFB6EFE8));
+        background.addState(new int[]{android.R.attr.state_focused}, AppGridAdapter.shape(0xFFE8F0F5, 0xFFE8F0F5));
+        background.addState(new int[]{android.R.attr.state_pressed}, AppGridAdapter.shape(0xFFE8F0F5, 0xFFE8F0F5));
         background.addState(new int[]{android.R.attr.state_selected}, AppGridAdapter.shape(0x99304F5B, 0x6665A7A3));
-        background.addState(new int[]{}, AppGridAdapter.shape(0x661B2D3B, 0)); button.setBackground(background);
+        background.addState(new int[]{}, AppGridAdapter.pill(0x60304456)); button.setBackground(background);
         button.setStateListAnimator(null); button.setOnClickListener(v -> action.run());
-        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, dp(40)); lp.setMarginEnd(dp(8));
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, dp(32)); lp.setMarginEnd(dp(8));
         button.setLayoutParams(lp); return button;
+    }
+    private Button navigation(int label, int id, Runnable action) {
+        Button view = button(label, action); view.setId(id);
+        view.setBackground(new NavigationBackground(getResources().getDisplayMetrics().density));
+        view.setTextColor(new android.content.res.ColorStateList(new int[][]{
+                {android.R.attr.state_focused}, {android.R.attr.state_selected}, {}},
+                new int[]{0xFF152535, 0xFFF0F5F8, 0xFFACBDC9}));
+        view.setPadding(dp(13), 0, dp(13), 0);
+        view.setLayoutParams(new LinearLayout.LayoutParams(-2, dp(36))); return view;
+    }
+    private void updateTime() {
+        java.util.Date now = new java.util.Date();
+        clock.setText(android.text.format.DateFormat.getTimeFormat(this).format(now));
+        date.setText(new java.text.SimpleDateFormat("EEEE, d MMMM", Locale.getDefault()).format(now));
+        if (page.equals("home")) {
+            int hour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY);
+            title.setText(hour < 12 ? R.string.good_morning : hour < 18 ? R.string.good_afternoon : R.string.good_evening);
+        }
     }
     private void buildScreen() {
         root = new FrameLayout(this); root.setBackground(new DeckBackground(prefs.scene()));
         root.setLayoutDirection(View.LAYOUT_DIRECTION_LOCALE);
+        boolean largeFont = getResources().getConfiguration().fontScale > 1.15f;
         LinearLayout layout = new LinearLayout(this); layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(dp(36), dp(22), dp(36), dp(20)); root.addView(layout, new FrameLayout.LayoutParams(-1, -1));
-        LinearLayout header = row();
+        layout.setPadding(dp(56), dp(32), dp(56), dp(30)); root.addView(layout, new FrameLayout.LayoutParams(-1, -1));
+        FrameLayout header = new FrameLayout(this);
+        LinearLayout identity = row();
         ImageView logo = new ImageView(this); logo.setImageResource(R.drawable.ic_still);
         logo.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-        header.addView(logo, new LinearLayout.LayoutParams(dp(32), dp(32)));
-        TextView brand = text(s(R.string.brand), 21, 0xFFF3F7FA); brand.setPadding(dp(9), 0, dp(25), 0);
-        header.addView(brand);
-        Button homeButton = button(R.string.home, () -> showPage("home", "")); homeButton.setId(R.id.nav_home); header.addView(homeButton);
-        Button appsButton = button(R.string.apps, () -> showPage("apps", "")); appsButton.setId(R.id.nav_apps); header.addView(appsButton);
-        Button collectionsButton = button(R.string.collections, this::showCollections); collectionsButton.setId(R.id.nav_collections); header.addView(collectionsButton);
-        Button settingsButton = button(R.string.settings, this::showSettings); settingsButton.setId(R.id.nav_settings); header.addView(settingsButton);
-        clock = text("", 18, 0xFFDDECEB); clock.setGravity(Gravity.END);
-        header.addView(clock, new LinearLayout.LayoutParams(0, -2, 1));
-        layout.addView(header, new LinearLayout.LayoutParams(-1, dp(46)));
-        title = text("", 35, 0xFFF5F7FA); title.setPadding(0, dp(17), 0, 0);
+        identity.addView(logo, new LinearLayout.LayoutParams(dp(21), dp(21)));
+        TextView brand = text(s(R.string.brand), 16, 0xFFEEF4F7);
+        brand.setTypeface(android.graphics.Typeface.create("sans-serif-medium", 0)); brand.setPadding(dp(7), 0, 0, 0);
+        identity.addView(brand);
+        FrameLayout.LayoutParams identityLp = new FrameLayout.LayoutParams(-2, -2, Gravity.START | Gravity.CENTER_VERTICAL);
+        header.addView(identity, identityLp);
+        LinearLayout navigation = row();
+        navigation.addView(navigation(R.string.home, R.id.nav_home, () -> showPage("home", "")));
+        navigation.addView(navigation(R.string.apps, R.id.nav_apps, () -> showPage("apps", "")));
+        navigation.addView(navigation(R.string.appearance, R.id.nav_appearance, this::showAppearance));
+        navigation.addView(navigation(R.string.settings, R.id.nav_settings, this::showSettings));
+        header.addView(navigation, new FrameLayout.LayoutParams(-2, -2, Gravity.CENTER));
+        clock = text("", 16, 0xFFDDE7EF); clock.setGravity(Gravity.END);
+        header.addView(clock, new FrameLayout.LayoutParams(-2, -2, Gravity.END | Gravity.CENTER_VERTICAL));
+        layout.addView(header, new LinearLayout.LayoutParams(-1, dp(40)));
+        date = text("", 11, 0xFFADC4D5); date.setPadding(0, dp(largeFont ? 21 : 40), 0, 0); layout.addView(date);
+        title = text("", largeFont ? 32 : 38, 0xFFF3F7FA);
+        title.setTypeface(android.graphics.Typeface.create("sans-serif-light", 0));
+        title.setSingleLine(true); title.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        title.setPadding(0, dp(8), 0, 0);
         if (Build.VERSION.SDK_INT >= 28) title.setAccessibilityHeading(true);
         layout.addView(title);
-        subtitle = text(s(R.string.home_subtitle), 14, 0xFFC4D5DE); subtitle.setPadding(0, dp(3), 0, dp(14)); layout.addView(subtitle);
-        LinearLayout toolbar = row();
-        favouritesButton = button(R.string.favourites, () -> showPage("home", "")); toolbar.addView(favouritesButton);
+        subtitle = text(s(R.string.home_subtitle), 13, 0xFFB9CDD9);
+        subtitle.setPadding(0, dp(3), 0, 0); layout.addView(subtitle);
+        LinearLayout heading = row(); heading.setPadding(0, dp(largeFont ? 22 : 43), 0, dp(14));
+        section = text(s(R.string.favourites), 14, 0xFFEEF4F7);
+        section.setTypeface(android.graphics.Typeface.create("sans-serif-medium", 0));
+        heading.addView(section, new LinearLayout.LayoutParams(0, -2, 1));
+        instruction = text(s(R.string.organise_hint), 10, 0xFF8197A9); heading.addView(instruction);
+        layout.addView(heading);
+        toolbar = row();
+        favouritesButton = button(R.string.collections, this::showCollections); favouritesButton.setId(R.id.nav_collections);
+        toolbar.addView(favouritesButton);
         recentButton = button(R.string.recent, () -> showPage("recent", "")); toolbar.addView(recentButton);
         search = new EditText(this); search.setId(R.id.app_search); search.setSingleLine(true);
-        search.setTextSize(14); search.setTextColor(Color.WHITE); search.setHintTextColor(0xFFBACBD6);
+        search.setTextSize(12); search.setTextColor(Color.WHITE); search.setHintTextColor(0xFFBACBD6);
         search.setHint(R.string.search_hint); search.setContentDescription(s(R.string.search_description));
         search.setInputType(android.text.InputType.TYPE_CLASS_TEXT);
-        toolbar.addView(search, new LinearLayout.LayoutParams(0, dp(44), 1));
-        layout.addView(toolbar);
-        count = text(s(R.string.loading), 12, 0xFFB9CCD7); count.setPadding(0, dp(9), 0, dp(9)); layout.addView(count);
-        FrameLayout content = new FrameLayout(this); layout.addView(content, new LinearLayout.LayoutParams(-1, 0, 1));
+        toolbar.addView(search, new LinearLayout.LayoutParams(0, dp(36), 1)); layout.addView(toolbar);
+        count = text(s(R.string.loading), 11, 0xFFB9CCD7); count.setPadding(0, dp(7), 0, dp(8)); layout.addView(count);
+        content = new FrameLayout(this); layout.addView(content, new LinearLayout.LayoutParams(-1, 0, 1));
         grid = new GridView(this); grid.setId(R.id.app_grid); grid.setNumColumns(prefs.columns());
-        grid.setHorizontalSpacing(dp(12)); grid.setVerticalSpacing(dp(12)); grid.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
+        grid.setHorizontalSpacing(dp(9)); grid.setVerticalSpacing(dp(12)); grid.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
         grid.setClipToPadding(false); grid.setPadding(dp(3), dp(3), dp(3), dp(3));
         grid.setSelector(new ColorDrawable(Color.TRANSPARENT)); grid.setDrawSelectorOnTop(false);
         grid.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         adapter = new AppGridAdapter(this, artwork, prefs); grid.setAdapter(adapter);
         content.addView(grid, new FrameLayout.LayoutParams(-1, -1));
-        empty = text(s(R.string.empty) + "\n\n" + s(R.string.empty_hint), 17, 0xFFD9E6EA);
-        empty.setPadding(dp(4), dp(20), dp(4), dp(4)); content.addView(empty, new FrameLayout.LayoutParams(-1, -1));
+        empty = text(s(R.string.empty) + "\n\n" + s(R.string.empty_hint), 14, 0xFFD9E6EA);
+        empty.setPadding(dp(4), dp(10), dp(4), dp(4)); content.addView(empty, new FrameLayout.LayoutParams(-1, -1));
         grid.setEmptyView(empty);
         grid.setOnItemClickListener((parent, view, position, id) -> launch(adapter.getItem(position)));
         grid.setOnItemLongClickListener((parent, view, position, id) -> { showOptions(adapter.getItem(position)); return true; });
@@ -181,12 +221,15 @@ public class MainActivity extends Activity {
             }
             @Override public void onNothingSelected(AdapterView<?> parent) { }
         });
-        LinearLayout footer = row(); footer.setPadding(0, dp(12), 0, 0);
-        Button options = button(R.string.options, this::selectedOptions); options.setId(R.id.app_options); footer.addView(options);
-        footer.addView(button(R.string.inputs, this::openInputs));
-        footer.addView(button(R.string.choose_favourites, this::chooseFavourites));
-        TextView caption = text(s(R.string.footer), 11, 0xFFADC4CF); caption.setGravity(Gravity.END);
-        footer.addView(caption, new LinearLayout.LayoutParams(0, -2, 1)); layout.addView(footer);
+        shortcuts = row(); shortcuts.setPadding(0, dp(18), 0, 0);
+        shortcuts.addView(button(R.string.all_apps, () -> showPage("apps", "")));
+        shortcuts.addView(button(R.string.inputs, this::openInputs));
+        shortcuts.addView(button(R.string.settings, this::showSettings));
+        Button options = button(R.string.options, this::selectedOptions); options.setId(R.id.app_options); shortcuts.addView(options);
+        layout.addView(shortcuts);
+        LinearLayout footer = row(); footer.setPadding(0, dp(23), 0, 0);
+        footer.addView(text(s(R.string.footer), 10, 0xFF6E8597), new LinearLayout.LayoutParams(0, -2, 1));
+        footer.addView(text(s(R.string.footer_brand), 9, 0xFF5F788B)); layout.addView(footer);
         setContentView(root);
         search.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence value, int start, int count, int after) { }
@@ -260,14 +303,24 @@ public class MainActivity extends Activity {
     private void render() {
         if (adapter == null) return;
         boolean home = page.equals("home"), recent = page.equals("recent");
+        ((View) section.getParent()).setVisibility(home ? View.VISIBLE : View.GONE);
+        int viewportWidth = getResources().getDisplayMetrics().widthPixels - dp(118 + 9 * (prefs.columns() - 1));
+        int homeRow = viewportWidth / prefs.columns() * 9 / 16 + dp(34 + (prefs.textSize() == 2 ? 8 : 0));
+        grid.setLayoutParams(new FrameLayout.LayoutParams(-1, home ? homeRow : -1));
         findViewById(R.id.nav_home).setSelected(home || recent);
         findViewById(R.id.nav_apps).setSelected(page.equals("apps"));
         findViewById(R.id.nav_collections).setSelected(page.equals("group"));
-        favouritesButton.setSelected(home); recentButton.setSelected(recent);
-        title.setText(home || recent ? s(R.string.home_title) : page.equals("group") ? group : s(R.string.apps_title));
-        subtitle.setText(home || recent ? s(R.string.home_subtitle) : page.equals("group") ? s(R.string.collections) : s(R.string.apps));
-        favouritesButton.setVisibility(home || recent ? View.VISIBLE : View.GONE);
-        recentButton.setVisibility(home || recent ? View.VISIBLE : View.GONE);
+        recentButton.setSelected(recent);
+        date.setVisibility(home ? View.VISIBLE : View.GONE);
+        title.setText(home ? s(R.string.good_evening) : recent ? s(R.string.recent) : page.equals("group") ? group : s(R.string.apps_title));
+        subtitle.setText(home ? s(R.string.home_subtitle) : s(R.string.apps_subtitle));
+        section.setText(home ? R.string.favourites : page.equals("group") ? R.string.collections : R.string.apps);
+        instruction.setText(R.string.organise_hint);
+        toolbar.setVisibility(home ? View.GONE : View.VISIBLE);
+        count.setVisibility(home ? View.GONE : View.VISIBLE);
+        // Advanced actions stay on Apps and Settings; Home retains three small shortcuts.
+        findViewById(R.id.app_options).setVisibility(home ? View.GONE : View.VISIBLE);
+        updateTime();
         Set<String> hidden = prefs.hidden(); Map<String, AppEntry> available = new LinkedHashMap<>();
         for (AppEntry app : apps) if (!hidden.contains(app.id)) available.put(app.id, app);
         List<AppEntry> visible = new ArrayList<>();
@@ -366,11 +419,28 @@ public class MainActivity extends Activity {
             Toast.makeText(this, s(R.string.collection_added, name), Toast.LENGTH_SHORT).show(); render();
         } catch (IllegalArgumentException invalid) { toast(R.string.invalid_collection); }
     }
+    private void showAppearance() {
+        int[] labels = {R.string.background, R.string.grid_size, R.string.text_size, R.string.high_contrast,
+                R.string.local_wallpaper, R.string.remove_wallpaper};
+        String[] names = new String[labels.length]; for (int i=0; i<labels.length; i++) names[i]=s(labels[i]);
+        new AlertDialog.Builder(this).setTitle(R.string.appearance).setItems(names, (d, which) -> {
+            switch (which) {
+                case 0: chooseSetting(R.string.background, "scene", new int[]{R.string.blue_hour, R.string.warm_dusk, R.string.midnight}, prefs.scene()); break;
+                case 1: chooseSetting(R.string.grid_size, "density", new int[]{R.string.large_tiles, R.string.balanced_tiles, R.string.compact_tiles}, prefs.density()); break;
+                case 2: chooseSetting(R.string.text_size, "textSize", new int[]{R.string.small_text, R.string.normal_text, R.string.large_text}, prefs.textSize()); break;
+                case 3:
+                    new AlertDialog.Builder(this).setTitle(R.string.high_contrast).setSingleChoiceItems(new String[]{s(R.string.off), s(R.string.on)}, prefs.contrast()?1:0,
+                            (dialog, pick) -> { prefs.raw.edit().putBoolean("contrast",pick==1).apply(); dialog.dismiss(); rebuildScreen(); }).show(); break;
+                case 4: pickFile(WALLPAPER); break;
+                default: replaceWallpaper(null);
+            }
+        }).setNegativeButton(R.string.close,null).show();
+    }
     private void showSettings() {
         int[] ids = {R.string.choose_favourites, R.string.background, R.string.grid_size, R.string.text_size,
                 R.string.high_contrast, R.string.local_wallpaper, R.string.remove_wallpaper, R.string.restore_hidden,
                 R.string.default_home, R.string.settings, R.string.refresh, R.string.export_config, R.string.import_config,
-                R.string.clear_recent, R.string.privacy, R.string.about};
+                R.string.clear_recent, R.string.privacy, R.string.about, R.string.options, R.string.collections, R.string.recent};
         String[] labels = new String[ids.length]; for (int i = 0; i < ids.length; i++) labels[i] = s(ids[i]);
         new AlertDialog.Builder(this).setTitle(R.string.settings).setItems(labels, (d, which) -> {
             switch (which) {
@@ -393,6 +463,9 @@ public class MainActivity extends Activity {
                 case 12: pickFile(IMPORT); break;
                 case 13: prefs.raw.edit().remove("recent").apply(); render(); toast(R.string.recent_cleared); break;
                 case 14: showText(R.string.privacy, s(R.string.policy_text)); break;
+                case 16: selectedOptions(); break;
+                case 17: showCollections(); break;
+                case 18: showPage("recent", ""); break;
                 default: showText(R.string.about, s(R.string.about_text, s(R.string.version_name), artwork.bytes() / 1024, s(lowRam ? R.string.on : R.string.off)));
             }
         }).setNegativeButton(R.string.close, null).show();

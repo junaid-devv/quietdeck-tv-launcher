@@ -12,8 +12,9 @@ android {
         applicationId 'com.still.launcher'
         minSdk 23
         targetSdk 35
-        versionCode 3
-        versionName '1.1.0'
+        versionCode 21
+        versionName '2.0.0-rc2'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
     buildTypes {
@@ -22,7 +23,9 @@ android {
             versionNameSuffix '-dev'
         }
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -41,4 +44,7 @@ tasks.withType(JavaCompile).configureEach {
 
 dependencies {
     testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+    androidTestImplementation 'androidx.test:core:1.6.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
 }

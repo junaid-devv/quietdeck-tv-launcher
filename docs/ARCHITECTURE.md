@@ -1,25 +1,48 @@
-# Architecture and privacy
+# Architecture
 
-## Runtime
+QuietDeck uses native Android framework widgets and Java. There are no third-party runtime libraries, network clients, services, scheduled jobs or requested Android permissions. AndroidX and JUnit exist only in test APKs, not the release app.
 
-`MainActivity` owns a single native `HomeView`. Android Canvas draws a 1920 × 1080 reference layout scaled to the TV's reported display area. A locally generated ARGB8888 bitmap caches the background; app banners and icons are loaded through Android's package manager on a background executor.
+## Ownership
 
-`GridNavigator` contains the platform-independent grid movement used by the D-pad handler. JVM tests exercise empty grids, row boundaries, partial last rows, shrinking lists, and reachability across multi-page grids.
+| Component | Responsibility |
+| --- | --- |
+| MainActivity | Native screen, dialogs, lifecycle, user actions and standard system intents |
+| AppRepository | Background metadata discovery, package-event refresh and coalesced queries |
+| AppEntry | Immutable app metadata and explicit launch component |
+| AppGridAdapter | Recycled native app tiles and accessibility descriptions |
+| ArtworkLoader | Visible-cell artwork, one worker, bounded queue, byte-bounded LRU and stale-view checks |
+| AspectFit | Tested proportional letterbox geometry |
+| PreferencesStore / ConfigRules | Legacy preferences, collections, local recents and transactional validated JSON import |
+| DeckBackground | Preconstructed paths/shaders for original static vector scenery |
+| WallpaperBackground | Center-cropped display of an optional sampled image |
 
-The app queries the standard `LEANBACK_LAUNCHER`, `LAUNCHER`, and `HOME` intents. It does not request broad `QUERY_ALL_PACKAGES` access. Installed home apps, settings entries, and known factory/service shortcuts are excluded. A package-change receiver refreshes the list after installs, removals, or changes.
+## Discovery and launching
 
-## State
+Discovery queries Leanback launchers first, then ordinary launcher activities, deduplicating by package. It excludes Home apps, Settings and known factory/service shortcuts. Labels are locale-sorted. Package changes invalidate metadata and artwork. Returning from another app reuses metadata and cached artwork; it updates the displayed recent list without rediscovering installed packages. A failed refresh keeps the last successful result and offers retry through Settings.
 
-Android SharedPreferences stores favourite package IDs and their order, hidden package IDs, and the selected background. The preference file keeps the legacy name `still` to preserve upgrades from the original prototype. No viewing history or playback activity is recorded. Android application backup is disabled in the manifest.
+Launches use an explicit installed component. A disappearing or failing activity produces a message and refresh rather than crashing Home. Hidden apps are omitted from Home, collections, recents and search. Search covers all visible installed apps even when started on Home.
 
-## Permissions and data
+## Memory and storage
 
-The app requests **no Android permissions**, including no `INTERNET`, storage, microphone, camera, accessibility-service, or usage-access permission. There are no analytics, ad SDKs, network clients, or cloud endpoints in the application. Build-time downloads and GitHub's website are separate from the installed application.
+- Artwork cache: 2 MiB when ActivityManager reports a low-RAM device; 4 MiB otherwise. These are cache budgets, **not total app RAM claims**.
+- Raster targets: 240×135 or 320×180 ARGB. Source aspect ratio is preserved; non-banner icons are centered with padding. ImageView uses FIT_CENTER for final display.
+- One artwork worker; at most 24 queued requests, with stale requests discarded. Weak targets and package tags prevent recycled tiles receiving the wrong icon.
+- No disk artwork cache or bundled content catalogue. Native GridView recycles visible cells.
+- Built-in scenery has no full-screen bitmap, draw-time object creation or animations. Clock callbacks run once per minute while resumed.
+- Optional wallpaper is sampled to a maximum dimension of 960 pixels in low-RAM mode or 1280 otherwise. A generation token discards stale work. UI-hidden trim drops its reference; resume can reload it.
+- Workers and callbacks are shut down when the Activity is destroyed. Trimming evicts artwork without recycling bitmaps still displayed by native views.
+- R8 and resource shrinking apply to Gradle release builds. The SDK-only fallback compiles without R8 and is not the distribution build.
 
-App labels, icons and installed package identifiers are processed on the TV to render the launcher. They are not transmitted by QuietDeck. Other apps launched from the grid operate under their own policies.
+## Persistence and privacy
 
-## Accessibility and scope
+Preferences retain the original private `still` store, pipe-separated favourites and hidden-app set. Recent activity records only up to 12 package identifiers opened through QuietDeck. Collections are local JSON. Standard Android automatic backup and device transfer are excluded.
 
-Navigation is designed primarily for a D-pad. The selected item sends a basic accessibility announcement, but the Canvas UI does not yet expose a complete virtual-node tree for granular screen-reader navigation. Full accessibility support is open work, not a completed feature.
+User-initiated Storage Access Framework exports contain schema 2, favourites, hidden apps, collections and appearance. Imports are limited to 64 KiB and validate package identifiers, group names/counts and option ranges before one preferences transaction. They cannot include commands or launch arbitrary URI intents. Recent activity and wallpaper are excluded. A wallpaper uses a user-selected persisted read grant, released when replaced or removed; no broad storage permission is requested.
 
-No firmware, package settings, or home-app preference is changed automatically by the APK. A user or installer must select the home app or explicitly apply an external ADB workaround.
+The release contains no native `.so` libraries. CI additionally exercises a 16 KiB-page Android runtime. Recheck the final bundle and dependencies after every SDK change.
+
+## Interface and limitations
+
+Native controls provide per-control accessibility semantics, visible focus and normal Android dialogs. App labels use scalable text and ellipsis; the UI follows locale layout direction. Strings are centralized for future localization. Full TalkBack, RTL-language, 4K and physical remote qualification remain explicit device-test gates, not claims inferred from native widgets.
+
+Default Home uses Android's Home role/picker where available, then the manufacturer's settings route. The app does not disable system packages. Back clears search, returns to Home, then exits an ordinary launch; when QuietDeck is the actual default Home it stays on Home. Optional Inputs and document intents fail with an explanation if unsupported.

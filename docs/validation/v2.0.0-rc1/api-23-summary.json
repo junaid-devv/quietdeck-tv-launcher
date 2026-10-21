@@ -1,0 +1,16 @@
+{
+  "package": "com.still.launcher",
+  "model": "sdk_google_atv_x86",
+  "sdk": "23",
+  "low_ram": "",
+  "page_size": "unknown (getconf unavailable)",
+  "cold_start_ms": [
+    9317,
+    1022,
+    1058,
+    1070,
+    1090
+  ],
+  "median_cold_start_ms": 1070,
+  "method": "am force-stop + am start -W, TotalTime; 2s settling; no installed-app data clearing"
+}

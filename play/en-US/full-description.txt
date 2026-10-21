@@ -1,0 +1,26 @@
+Give your TV a quieter home.
+
+QuietDeck TV Launcher brings your favourite apps together in a clean Android TV home screen. Navigate with your remote, find an app by name, and organize your own collections without recommendation feeds or promotional rows.
+
+MAKE IT YOURS
+• Choose and reorder favourites.
+• Find installed apps with search.
+• Create named collections for movies, music, games or family apps.
+• Return to up to 12 apps opened through QuietDeck, or clear that list anytime.
+• Hide apps from the launcher and restore them in Settings.
+
+A CLEARER VIEW
+• App banners and icons keep their original proportions.
+• Choose four, five or six columns and three app-label sizes.
+• Use a high-contrast background, three built-in scenes or your own local wallpaper.
+• Open app options from a visible button or by holding OK.
+
+SMALL, LOCAL AND PRIVATE
+QuietDeck uses native Android controls, a bounded artwork cache and no third-party runtime libraries. It has no ads, accounts, analytics or internet permission. Your configuration and recently opened list stay on your TV. Export and restore settings through a compatible Android document picker.
+
+MADE FOR ANDROID TV
+Requires Android 6.0 or later on a TV device. Default Home selection, input settings and document-picker availability depend on your TV manufacturer. QuietDeck provides shortcuts to available system settings; it cannot bypass manufacturer Home-button restrictions. Some apps may be unavailable or unsuitable for remote use.
+
+QuietDeck changes your launcher home screen. Streaming content and subscriptions are provided by the apps you install. QuietDeck is independent of Google, Apple, TV manufacturers and streaming services.
+
+Free and open source: https://github.com/junaid-devv/quietdeck-tv-launcher

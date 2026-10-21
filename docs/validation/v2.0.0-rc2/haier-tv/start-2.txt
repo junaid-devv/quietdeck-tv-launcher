@@ -1,0 +1,7 @@
+Starting: Intent { cmp=com.still.launcher/.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: com.still.launcher/.MainActivity
+TotalTime: 665
+WaitTime: 672
+Complete

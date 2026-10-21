@@ -17,12 +17,9 @@ $java = Join-Path $JavaHome 'bin\java.exe'
 foreach ($required in @($android,$java,(Join-Path $JavaHome 'bin\javac.exe'),(Join-Path $tools 'aapt.exe'))) {
     if (!(Test-Path -LiteralPath $required)) { throw "Missing build tool: $required" }
 }
-New-Item -ItemType Directory -Force -Path $build,$dist,(Join-Path $build 'classes'),(Join-Path $build 'dex') | Out-Null
+New-Item -ItemType Directory -Force -Path $build,$dist,(Join-Path $build 'classes'),(Join-Path $build 'dex'),(Join-Path $build 'generated') | Out-Null
 function Check-Exit([string]$stage) { if ($LASTEXITCODE -ne 0) { throw "$stage failed ($LASTEXITCODE)" } }
-$sources = @(Get-ChildItem (Join-Path $main 'java') -Recurse -Filter '*.java' | ForEach-Object FullName)
 $boot = "$android;$(Join-Path $tools 'core-lambda-stubs.jar')"
-& (Join-Path $JavaHome 'bin\javac.exe') -source 8 -target 8 -encoding UTF-8 -bootclasspath $boot -d (Join-Path $build 'classes') @sources
-Check-Exit 'Java compilation'
 # AAPT needs fields that Gradle normally supplies during manifest merging.
 [xml]$manifest = Get-Content (Join-Path $main 'AndroidManifest.xml') -Raw
 $root = $manifest.DocumentElement
@@ -33,15 +30,18 @@ function Android-Attribute($element,[string]$name,[string]$value) {
     $attr.Value = $value
     $element.Attributes.SetNamedItem($attr) | Out-Null
 }
-Android-Attribute $root 'versionCode' '3'
-Android-Attribute $root 'versionName' '1.1.0'
+Android-Attribute $root 'versionCode' '20'
+Android-Attribute $root 'versionName' '2.0.0-rc1'
 $sdk = $manifest.CreateElement('uses-sdk')
 Android-Attribute $sdk 'minSdkVersion' '23'
 Android-Attribute $sdk 'targetSdkVersion' '35'
 $root.PrependChild($sdk) | Out-Null
 $manifest.Save((Join-Path $build 'AndroidManifest.xml'))
-& (Join-Path $tools 'aapt.exe') package -f -M (Join-Path $build 'AndroidManifest.xml') -S (Join-Path $main 'res') -I $android -F (Join-Path $build 'unsigned.apk')
+& (Join-Path $tools 'aapt.exe') package -f -m -J (Join-Path $build 'generated') -M (Join-Path $build 'AndroidManifest.xml') -S (Join-Path $main 'res') -I $android -F (Join-Path $build 'unsigned.apk')
 Check-Exit 'Resource packaging'
+$sources = @(Get-ChildItem (Join-Path $main 'java'),(Join-Path $build 'generated') -Recurse -Filter '*.java' | ForEach-Object FullName)
+& (Join-Path $JavaHome 'bin\javac.exe') -source 8 -target 8 -encoding UTF-8 -bootclasspath $boot -d (Join-Path $build 'classes') @sources
+Check-Exit 'Java compilation'
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 [System.IO.Compression.ZipFile]::CreateFromDirectory((Join-Path $build 'classes'),(Join-Path $build 'classes.jar'))
 & $java -cp (Join-Path $tools 'lib\d8.jar') com.android.tools.r8.D8 --min-api 23 --lib $android --output (Join-Path $build 'dex') (Join-Path $build 'classes.jar')
@@ -56,7 +56,7 @@ if ($Release) {
         throw 'Release builds require QUIETDECK_KEYSTORE, QUIETDECK_SIGNING_PASSWORD and the matching -KeyAlias. Keep them outside Git.'
     }
     $password = 'env:QUIETDECK_SIGNING_PASSWORD'
-    $output = Join-Path $dist 'QuietDeck-TV-v1.1.0.apk'
+    $output = Join-Path $dist 'QuietDeck-TV-v2.0.0-rc1.apk'
 } else {
     $SigningKey = Join-Path $work 'development.p12'
     $KeyAlias = 'development'

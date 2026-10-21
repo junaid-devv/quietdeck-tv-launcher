@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-feature android:name="android.software.leanback" android:required="false" />
+    <uses-feature android:name="android.software.leanback" android:required="true" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
     <queries>
         <intent><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LEANBACK_LAUNCHER" /></intent>
@@ -9,8 +9,8 @@
         <intent><action android:name="android.settings.SETTINGS" /></intent>
         <intent><action android:name="android.intent.action.VIEW" /><data android:scheme="content" android:host="android.media.tv" /></intent>
     </queries>
-    <application android:label="@string/app_name" android:theme="@style/StillTheme" android:icon="@drawable/ic_still" android:banner="@drawable/tv_banner" android:allowBackup="false" android:supportsRtl="true" android:hardwareAccelerated="true">
-        <activity android:name="com.still.launcher.MainActivity" android:exported="true" android:launchMode="singleTask" android:screenOrientation="landscape" android:excludeFromRecents="true">
+    <application android:label="@string/app_name" android:theme="@style/StillTheme" android:icon="@drawable/ic_still" android:banner="@drawable/tv_banner" android:allowBackup="false" android:fullBackupContent="false" android:dataExtractionRules="@xml/data_extraction_rules" android:supportsRtl="true" android:hardwareAccelerated="true">
+        <activity android:name="com.still.launcher.MainActivity" android:exported="true" android:launchMode="singleTask" android:screenOrientation="landscape" android:excludeFromRecents="true" android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.HOME" />

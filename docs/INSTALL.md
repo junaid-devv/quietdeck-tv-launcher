@@ -1,5 +1,7 @@
 # Install QuietDeck TV on Android TV
 
+For v2, select the explicitly marked `2.0.0-rc1` prerelease rather than the latest stable v1.1 download. Use its filename in the commands below. Test it as an ordinary app before changing Home. Candidate qualification is documented in [release readiness](RELEASE-READINESS.md).
+
 ## Download and verify
 
 Get the APK and `SHA256SUMS.txt` from the project's [GitHub Releases](https://github.com/junaid-devv/quietdeck-tv-launcher/releases/latest). The checksum detects a damaged or mismatched download; it is not an independent guarantee of trust.
@@ -54,7 +56,7 @@ Check the app grid, Settings shortcut, remote navigation, and app launching. A m
 
 ## Make it your home screen
 
-First try the TV's Home-app picker or QuietDeck's **Appearance → Choose default home** action. ADB can also request a home-app change:
+First try the TV's Home-app picker or QuietDeck's **Settings → Choose default Home** action. ADB can also request a home-app change:
 
 ```bash
 adb -s TV_SERIAL shell cmd package resolve-activity --brief -a android.intent.action.MAIN -c android.intent.category.HOME

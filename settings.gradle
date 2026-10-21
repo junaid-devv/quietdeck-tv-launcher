@@ -14,3 +14,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = 'QuietDeckTV'
 include ':app'
+// Isolated CI fixture apps; never linked into the launcher or its release bundle.
+include ':showcase'

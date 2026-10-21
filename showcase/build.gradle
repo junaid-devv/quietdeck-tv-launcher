@@ -1,0 +1,13 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'com.quietdeck.fixture'
+    compileSdk 35
+    buildToolsVersion '35.0.0'
+    defaultConfig { applicationId 'com.quietdeck.fixture'; minSdk 23; targetSdk 35; versionCode 1; versionName '1' }
+    flavorDimensions 'artwork'
+    productFlavors {
+        music { dimension 'artwork'; applicationIdSuffix '.music'; resValue 'string', 'app_name', 'Quiet Music' }
+        cinema { dimension 'artwork'; applicationIdSuffix '.cinema'; resValue 'string', 'app_name', 'Quiet Cinema' }
+        games { dimension 'artwork'; applicationIdSuffix '.games'; resValue 'string', 'app_name', 'Quiet Games' }
+    }
+}

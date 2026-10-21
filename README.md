@@ -1,93 +1,72 @@
-<p align="center">
-  <img src="docs/branding/quietdeck-mark.svg" width="80" height="80" alt="QuietDeck TV logo">
-</p>
+<p align="center"><img src="docs/branding/quietdeck-mark.svg" width="88" height="88" alt="QuietDeck logo"></p>
+<h1 align="center">QuietDeck TV Launcher</h1>
+<p align="center"><strong>Your apps. A quieter home.</strong></p>
+<p align="center"><a href="https://github.com/junaid-devv/quietdeck-tv-launcher/actions/workflows/android.yml"><img alt="Android build and tests" src="https://github.com/junaid-devv/quietdeck-tv-launcher/actions/workflows/android.yml/badge.svg?branch=release%2F2.0-play-candidate"></a> <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-blue.svg"></a> <img alt="Android TV 6.0 and later" src="https://img.shields.io/badge/Android_TV-6.0%2B-3ddc84"></p>
 
-<h1 align="center">QuietDeck TV — Minimal Android TV Launcher</h1>
+**QuietDeck is a free, open-source Android TV launcher with favourites, app search and personal collections.** A calm home screen, native remote controls, and local customization without ads, accounts, analytics or internet permission.
 
-<p align="center"><strong>Your apps. A quieter home screen.</strong></p>
+**2.0.0-rc2 is a release candidate.** The original calm Home design is restored: compact Home / Apps / Appearance / Settings navigation, a time-based greeting, favourites with labels below their banners and three small shortcuts. Search, collections and recent apps live on Apps and Settings. The native accessibility and performance work remains. A physical Haier Android 11 smoke test now passes; broader TV qualification and Google Play testing remain required. The stable v1.1.0 physical-device results do not certify this new build.
 
-<p align="center">
-  <a href="https://github.com/junaid-devv/quietdeck-tv-launcher/actions/workflows/android.yml"><img alt="Android build and tests" src="https://github.com/junaid-devv/quietdeck-tv-launcher/actions/workflows/android.yml/badge.svg"></a>
-  <a href="https://github.com/junaid-devv/quietdeck-tv-launcher/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/junaid-devv/quietdeck-tv-launcher"></a>
-  <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
-  <img alt="Minimum Android 6.0 API 23" src="https://img.shields.io/badge/Android-6.0%2B-3ddc84">
-</p>
+[Downloads and release notes](https://github.com/junaid-devv/quietdeck-tv-launcher/releases) Ãƒâ€šÃ‚Â· [Install and restore](docs/INSTALL.md) Ãƒâ€šÃ‚Â· [Build](docs/BUILD.md) Ãƒâ€šÃ‚Â· [Readiness and testing](docs/RELEASE-READINESS.md) Ãƒâ€šÃ‚Â· [Play handoff](play/PUBLISHING.md)
 
-**QuietDeck TV is a free, open-source Android TV launcher with no ads, no accounts, and no internet permission.** Replace a busy home screen with a favourites row, a complete app grid, and three quiet landscape backgrounds. Built in native Java for D-pad remotes, with no third-party runtime libraries.
+## A focused Android TV home
 
-<p align="center">
-  <a href="https://github.com/junaid-devv/quietdeck-tv-launcher/releases/latest"><strong>Download the APK</strong></a> ·
-  <a href="docs/INSTALL.md">Installation guide</a> ·
-  <a href="docs/COMPATIBILITY.md">Device compatibility</a> ·
-  <a href="docs/BUILD.md">Build from source</a>
-</p>
+- **Organize your apps:** choose and reorder favourites, create named collections, hide apps and restore them later.
+- **Find and return:** search installed visible apps by name, or revisit up to 12 apps opened through QuietDeck. Clear recent activity anytime.
+- **Proportional artwork:** landscape banners, square icons and tall artwork fit inside tiles without stretching.
+- **Make it readable:** four, five or six columns; three app-label sizes; high contrast; native focusable controls and dialogs.
+- **Local appearance:** three original vector scenes or a sampled local wallpaper through the Android document picker.
+- **Portable configuration:** export and restore favourites, hidden apps, collections and appearance. Recent activity and wallpaper stay out of backups.
+- **Small native runtime:** Java and framework widgets, no third-party runtime libraries, a recycled grid and bounded artwork caching. Release builds use R8 and resource shrinking.
+- **Clear setup:** first-run guidance, optional default-Home selection and visible app-options access for remotes without a Menu button.
 
-![QuietDeck TV home screen on a real Haier Android TV, showing a blue landscape and four favourite apps](docs/screenshots/home.png)
-
-## Why QuietDeck TV?
-
-- **A focused home:** your favourite apps, local time, date, and quick access to Apps, Inputs, and Settings.
-- **Less clutter:** hide apps, reorder favourites, and keep recommendations off the home screen.
-- **Remote first:** navigate with arrows and OK; hold OK or press Menu for app options.
-- **Three backgrounds:** Blue hour, Warm dusk, and Midnight, rendered locally without wallpaper downloads.
-- **Private by design:** no requested Android permissions, analytics, advertising SDKs, or cloud account. Preferences stay on the TV.
-- **Small native app:** no web view, streaming catalogue, or third-party runtime dependencies.
-- **Recoverable setup:** installation and restore instructions document how to return to the original launcher.
-
-QuietDeck changes the **home screen**. It does not remove ads from other apps, modify Android firmware, or provide streaming subscriptions.
+QuietDeck changes your home screen. Streaming content and subscriptions come from your installed apps. Default Home, Inputs and file-picker support depend on the manufacturer.
 
 ## Screenshots
 
-| Home and favourites | All installed apps |
-| --- | --- |
-| ![Minimal Android TV home with favourite app tiles](docs/screenshots/home.png) | ![Android TV app grid with D-pad selection](docs/screenshots/apps.png) |
+![QuietDeck v2 Home with proportional artwork](docs/screenshots/v2-tv/home.png)
 
-These are captures from a physical Haier TV, not mockups. App tiles come from installed apps and will differ on your device. App names and logos belong to their respective owners.
+![QuietDeck v2 app library](docs/screenshots/v2-tv/apps.png)
 
-## Install
+The two images above are actual v2.0.0-rc2 captures from a physical 1280 × 720 Haier Android 11 TV. New-version captures and their exact device/runtime context are documented in [release readiness](docs/RELEASE-READINESS.md). Development emulator images use original fixture apps to exercise square, tall and wide artwork; those fixtures are not included in the launcher. The old Haier captures under `docs/screenshots/` show **v1.1**, not v2. They must not be used in a v2 Play listing.
 
-1. Download `QuietDeck-TV-v1.1.0.apk` from [Releases](https://github.com/junaid-devv/quietdeck-tv-launcher/releases/latest).
-2. Follow the [installation guide](docs/INSTALL.md) to sideload it with ADB or your TV's trusted installer.
-3. Open QuietDeck TV and test navigation and app launching before changing the Home app.
-4. Choose it as the Home app if your TV supports that setting. Manufacturer restrictions vary; see [Home-button setup and rollback](docs/INSTALL.md#make-it-your-home-screen).
+## Try it safely
 
-**Requirements:** Android 6.0/API 23 or later and a landscape TV interface. The current physical test device is a Haier Android 11 TV. Google TV, other brands, and Android versions have not yet been verified; see the [compatibility table](docs/COMPATIBILITY.md).
+1. Download the version you intend to test from [Releases](https://github.com/junaid-devv/quietdeck-tv-launcher/releases), and check its checksum and certificate fingerprint.
+2. Follow [installation](docs/INSTALL.md), then open QuietDeck as an ordinary app to check remote navigation and app launching.
+3. Choose your favourites. Use Settings for appearance, import/export and optional default-Home selection.
+4. Verify Home-button behavior and [restore instructions](docs/INSTALL.md#restore-the-original-launcher) before depending on it as your only launcher.
+
+Requires **Android TV 6.0 / API 23 or later**. The declared API floor is not a promise that every manufacturer's firmware is qualified. See [compatibility](docs/COMPATIBILITY.md).
 
 ## Remote controls
 
 | Control | Action |
 | --- | --- |
-| Arrows | Move between navigation, apps, and shortcuts |
+| Arrows | Move between native controls and app tiles; scroll app rows |
 | OK / Enter | Open the selected item |
-| Hold OK, Menu, or Info | Open app options |
-| Back | Return from Apps to Home |
-| Up from the first app row | Focus the top navigation |
-| Down through app rows | Scroll the grid or page favourites |
-
-Choose **Appearance** to change the background or restore hidden apps. Hiding an app affects QuietDeck only; it does not uninstall the app.
+| Hold OK, Menu or Info | Open app options; Apps has an App options button; Home exposes it through Settings |
+| Back | Clear search, then return to Home; leave an ordinary launch when already on Home |
+| Home | Open your chosen default Home app, subject to TV firmware |
 
 ## Build and contribute
 
-Open the project in Android Studio, or use JDK 17 and the included Gradle wrapper:
+Use JDK 17 and Android SDK 35 / Build-tools 35.0.0:
 
 ```bash
-./gradlew lintDebug testDebugUnitTest assembleDebug
+./gradlew :app:lintDebug :app:lintRelease :app:testDebugUnitTest :app:assembleDebug :app:assembleRelease :app:bundleRelease
 ```
 
-On Windows, run `gradlew.bat` instead. A small [SDK-only PowerShell build](docs/BUILD.md#sdk-only-build-on-windows) is also included. Debug builds use a separate app ID so they can coexist with the release.
+On Windows use `gradlew.bat`. Debug builds use `com.still.launcher.debug` and coexist with the release. The production package remains `com.still.launcher`, preserving signed updates and preferences from the original Still prototype. The isolated `showcase` module is only for emulator artwork fixtures.
 
-- [Build and release instructions](docs/BUILD.md)
-- [Architecture and privacy](docs/ARCHITECTURE.md)
-- [FAQ and troubleshooting](docs/FAQ.md)
-- [Contributing](CONTRIBUTING.md) · [Roadmap](docs/ROADMAP.md) · [Changelog](CHANGELOG.md)
-- [Report a bug or device result](https://github.com/junaid-devv/quietdeck-tv-launcher/issues/new/choose)
+[Build and signing](docs/BUILD.md) Ãƒâ€šÃ‚Â· [Architecture](docs/ARCHITECTURE.md) Ãƒâ€šÃ‚Â· [FAQ](docs/FAQ.md) Ãƒâ€šÃ‚Â· [Roadmap](docs/ROADMAP.md) Ãƒâ€šÃ‚Â· [Contributing](CONTRIBUTING.md) Ãƒâ€šÃ‚Â· [Changelog](CHANGELOG.md)
 
-## Project status
+## Privacy and support
 
-An early public release, tested on one physical TV. Home navigation, app launching, favourites persistence, app-grid scrolling, and Home-button return were exercised. Full screen-reader navigation, broader device testing, and localization remain open work. The [compatibility page](docs/COMPATIBILITY.md) separates tested behavior from the supported API floor.
+The app requests no Android permissions and sends no data to a server. Installed app metadata, preferences and recent activity are processed locally. Read the in-app privacy policy or [public policy source](docs/privacy.html). File providers, Android, Google Play and other apps have their own policies.
 
-The original prototype was named Still. Its application ID, `com.still.launcher`, is retained so signed releases can update that prototype without losing preferences.
+[Report an issue or device result](https://github.com/junaid-devv/quietdeck-tv-launcher/issues/new/choose) Ãƒâ€šÃ‚Â· [Private security reports](SECURITY.md)
 
 ## License
 
-[MIT](LICENSE), copyright © 2026 Muhammad Junaid. Third-party app artwork shown in screenshots is not part of this project's artwork license. QuietDeck TV is an independent project and is not affiliated with Google, Apple, Haier, or any streaming service.
+[MIT](LICENSE), Ãƒâ€šÃ‚Â© 2026 Muhammad Junaid. Original QuietDeck branding is included; third-party app artwork belongs to its owners. QuietDeck is independent of Google, Apple, TV manufacturers and streaming services.

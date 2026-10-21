@@ -1,0 +1,16 @@
+{
+  "package": "com.still.launcher",
+  "model": "haierATVnippori",
+  "sdk": "30",
+  "low_ram": "true",
+  "page_size": "4096",
+  "cold_start_ms": [
+    1058,
+    665,
+    490,
+    606,
+    481
+  ],
+  "median_cold_start_ms": 606,
+  "method": "am force-stop + am start -W, TotalTime; 2s settling; no installed-app data clearing"
+}

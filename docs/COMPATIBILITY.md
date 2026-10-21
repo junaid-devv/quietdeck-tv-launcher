@@ -8,7 +8,8 @@ The release declares Android TV 6.0 / API 23 minimum and target API 35, with req
 | Android TV API 23 x86 emulator, 1 GiB | v2 candidate | Instrumentation results linked in release readiness |
 | Android TV API 30 x86 emulator, 1 GiB | v2 candidate | Instrumentation results linked in release readiness |
 | Android API 35 x86_64 16 KiB-page image, TV display profile | v2 candidate | Modern runtime check; this image is not certified Google TV firmware |
-| Physical low-RAM Haier / other Android TV / Google TV | v2 candidate | Pending; TV was unavailable during preparation |
+| Physical Haier Android 11, low-RAM, 720p | v2.0.0-rc2 | Signed upgrade, preserved favourites, real artwork, D-pad navigation, Settings, YouTube launch and default Home return pass; median startup 606 ms across five samples |
+| Other Android TV / Google TV | v2 candidate | Physical qualification pending |
 
 TV manufacturers control Home selection, input settings, installed-app visibility, storage providers and standby behavior. A working standard intent on one device does not establish support on others. Optional features show an explanation when unavailable. The launcher can still open apps without replacing the Home button.
 

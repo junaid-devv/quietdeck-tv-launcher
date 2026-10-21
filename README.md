@@ -5,7 +5,7 @@
 
 **QuietDeck is a free, open-source Android TV launcher with favourites, app search and personal collections.** A calm home screen, native remote controls, and local customization without ads, accounts, analytics or internet permission.
 
-**2.0.0-rc2 is a release candidate.** The original calm Home design is restored: compact Home / Apps / Appearance / Settings navigation, a time-based greeting, favourites with labels below their banners and three small shortcuts. Search, collections and recent apps live on Apps and Settings. The native accessibility and performance work remains. Physical TV qualification and Google Play testing remain required. The stable v1.1.0 physical-device results do not certify this new build.
+**2.0.0-rc2 is a release candidate.** The original calm Home design is restored: compact Home / Apps / Appearance / Settings navigation, a time-based greeting, favourites with labels below their banners and three small shortcuts. Search, collections and recent apps live on Apps and Settings. The native accessibility and performance work remains. A physical Haier Android 11 smoke test now passes; broader TV qualification and Google Play testing remain required. The stable v1.1.0 physical-device results do not certify this new build.
 
 [Downloads and release notes](https://github.com/junaid-devv/quietdeck-tv-launcher/releases) Ãƒâ€šÃ‚Â· [Install and restore](docs/INSTALL.md) Ãƒâ€šÃ‚Â· [Build](docs/BUILD.md) Ãƒâ€šÃ‚Â· [Readiness and testing](docs/RELEASE-READINESS.md) Ãƒâ€šÃ‚Â· [Play handoff](play/PUBLISHING.md)
 
@@ -24,11 +24,11 @@ QuietDeck changes your home screen. Streaming content and subscriptions come fro
 
 ## Screenshots
 
-![QuietDeck v2 Home with proportional artwork](docs/screenshots/v2-emulator/default-home.png)
+![QuietDeck v2 Home with proportional artwork](docs/screenshots/v2-tv/home.png)
 
-![QuietDeck v2 app library](docs/screenshots/v2-emulator/default-apps.png)
+![QuietDeck v2 app library](docs/screenshots/v2-tv/apps.png)
 
-New-version captures and their exact device/runtime context are documented in [release readiness](docs/RELEASE-READINESS.md). Development emulator images use original fixture apps to exercise square, tall and wide artwork; those fixtures are not included in the launcher. The old Haier captures under `docs/screenshots/` show **v1.1**, not v2. They must not be used in a v2 Play listing.
+The two images above are actual v2.0.0-rc2 captures from a physical 1280 × 720 Haier Android 11 TV. New-version captures and their exact device/runtime context are documented in [release readiness](docs/RELEASE-READINESS.md). Development emulator images use original fixture apps to exercise square, tall and wide artwork; those fixtures are not included in the launcher. The old Haier captures under `docs/screenshots/` show **v1.1**, not v2. They must not be used in a v2 Play listing.
 
 ## Try it safely
 

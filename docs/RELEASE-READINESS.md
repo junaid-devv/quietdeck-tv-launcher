@@ -12,7 +12,7 @@ Background metadata discovery; recycled native grid cells; proportional artwork;
 
 ## Qualification
 
-The TV remains unavailable. No v2 physical-TV installation, reboot/standby, OEM Home integration, accessibility qualification or Play-delivered update test has been performed. Cache budgets and APK size do not establish total RAM or physical-device responsiveness. Do not infer a physical speedup from emulator timings.
+Physical Haier Android 11 smoke testing passed on 21 October 2026: signed in-place v1.1.0 → v2.0.0-rc2 upgrade, preserved four favourites and their order, proportional real app banners, D-pad Apps navigation, Back, Settings and app-options dialogs, YouTube launch and Home return to the existing default launcher. The TV reports low_ram=true, 1280 × 720 at density 213 and 4096-byte pages. Five force-stop/start samples were 1058, 665, 490, 606 and 481 ms (median 606 ms); a settled process snapshot recorded 56,937 KiB PSS. This is a smoke test, not a comparative performance claim. No launcher fatal exception appeared in its process-filtered runtime log. [Physical evidence](validation/v2.0.0-rc2/haier-tv/README.md). Reboot/standby, full accessibility, other OEMs and Play-delivered updates remain untested.
 
 The original v1.1 Haier check recorded a single cold launch of 773 ms and immediate PSS of 41,213 KiB. Those observations are not a v2 performance baseline.
 

@@ -1,3 +1,50 @@
 <resources>
-    <string name="app_name">QuietDeck TV</string>
+    <string name="app_name">QuietDeck TV Launcher</string>
+    <string name="brand">QuietDeck</string><string name="version_name">2.0.0-rc1</string>
+    <string name="home">Home</string><string name="apps">Apps</string>
+    <string name="collections">Collections</string><string name="settings">Settings</string>
+    <string name="options">App options</string><string name="inputs">Inputs</string>
+    <string name="favourites">Favourites</string><string name="recent">Recently opened</string>
+    <string name="home_title">Room for what you love.</string><string name="home_subtitle">Your apps, beautifully simple.</string>
+    <string name="apps_title">Everything, in its place.</string><string name="search_hint">Search your apps</string>
+    <string name="search_description">Search installed apps by name</string><string name="search">Search</string>
+    <string name="clear_search">Clear search</string><string name="app_count">%1$d apps · Hold OK or choose App options</string>
+    <string name="loading">Finding your apps…</string><string name="empty">No apps here yet.</string>
+    <string name="empty_hint">Open Apps to choose favourites, clear your search, or restore hidden apps in Settings.</string>
+    <string name="load_failed">Could not refresh apps. Your previous list is kept. Try Refresh apps in Settings.</string>
+    <string name="launch_failed">This app is unavailable. Refreshing your apps.</string>
+    <string name="settings_unavailable">TV settings are unavailable.</string><string name="input_hint">Use the Input or Source button on your remote.</string>
+    <string name="default_hint">Your TV restricts default Home selection. You can still open your apps here. See the setup guide for device-specific options.</string>
+    <string name="close">Close</string><string name="done">Done</string><string name="cancel">Cancel</string>
+    <string name="save">Save</string><string name="add">Add</string><string name="remove">Remove</string>
+    <string name="open_app">Open %1$s</string><string name="add_favourite">Add to favourites</string>
+    <string name="remove_favourite">Remove from favourites</string><string name="move_left">Move earlier</string><string name="move_right">Move later</string>
+    <string name="add_collection">Add to collection</string><string name="remove_collection">Remove from this collection</string>
+    <string name="hide_app">Hide from launcher</string><string name="app_information">App information</string>
+    <string name="new_collection">New collection</string><string name="collection_name">Collection name</string>
+    <string name="invalid_collection">Use a name of 1–32 characters. Up to 30 collections are supported.</string>
+    <string name="no_collections">Organize an app with App options → Add to collection. Empty collections disappear automatically.</string>
+    <string name="collection_added">Added to %1$s</string><string name="choose_favourites">Choose favourites</string>
+    <string name="background">Background</string><string name="grid_size">Tile layout</string><string name="text_size">App label size</string>
+    <string name="high_contrast">High contrast</string><string name="on">On</string><string name="off">Off</string>
+    <string name="large_tiles">Large · 4 columns</string><string name="balanced_tiles">Balanced · 5 columns</string><string name="compact_tiles">Compact · 6 columns</string>
+    <string name="small_text">Small</string><string name="normal_text">Standard</string><string name="large_text">Large</string>
+    <string name="blue_hour">Blue hour</string><string name="warm_dusk">Warm dusk</string><string name="midnight">Midnight</string>
+    <string name="local_wallpaper">Choose local wallpaper</string><string name="remove_wallpaper">Use built-in background</string>
+    <string name="wallpaper_failed">Could not open this image. The built-in background is available.</string>
+    <string name="restore_hidden">Restore hidden apps</string><string name="hidden_restored">Hidden apps restored.</string>
+    <string name="default_home">Choose default Home</string><string name="refresh">Refresh apps</string>
+    <string name="export_config">Export settings</string><string name="import_config">Import settings</string>
+    <string name="import_confirm">Replace favourites, hidden apps, collections and appearance with this backup? Local wallpaper and recent apps are excluded.</string>
+    <string name="import_done">Settings restored.</string><string name="export_done">Settings exported.</string>
+    <string name="file_error">Could not read or save this file. Choose a valid QuietDeck backup up to 64 KB.</string>
+    <string name="picker_unavailable">Your TV does not provide a compatible file picker.</string>
+    <string name="clear_recent">Clear recently opened apps</string><string name="recent_cleared">Recent apps cleared.</string>
+    <string name="privacy">Privacy policy</string><string name="about">About QuietDeck</string>
+    <string name="about_text">QuietDeck TV Launcher %1$s\n\nA calm, open-source home for Android TV. No ads, accounts, analytics or internet permission.\n\nArtwork cache: %2$d KB. Low-RAM mode: %3$s.\n\nSource and support: github.com/junaid-devv/quietdeck-tv-launcher\nDeveloper: Muhammad Junaid</string>
+    <string name="welcome">Welcome to QuietDeck</string>
+    <string name="welcome_text">Choose the apps you want on Home. Use your remote to move, press OK to open, and hold OK or select App options to organize.\n\nChanging your TV’s default Home is optional and depends on the manufacturer.</string>
+    <string name="start_choosing">Choose my favourites</string><string name="later">Later</string>
+    <string name="footer">Private by design. Made for your remote.</string>
+    <string name="policy_text">QuietDeck TV Launcher — Privacy policy\nEffective 21 October 2026\nDeveloper: Muhammad Junaid\n\nQuietDeck requests no Android permissions, including INTERNET. It has no accounts, analytics, advertising SDKs, tracking or server connection.\n\nInstalled app names, package identifiers and artwork are processed on your device to display and launch apps. Favourites, hidden apps, collections, appearance and up to 12 recently opened app identifiers are stored locally. Android application backup is disabled.\n\nClear recent apps in Settings. Clear application storage or uninstall QuietDeck to delete its local settings. Exported backup files contain your configuration, exclude recent activity and wallpaper, and remain in the location you choose until you delete them. Importing a backup replaces the selected local settings.\n\nA wallpaper you select is read through the Android document picker. Its document permission and address are retained locally so it can be displayed again. Removing the wallpaper stops its use; the original file is unchanged.\n\nQuietDeck does not transmit or share this information. Other apps you open follow their own privacy policies. Android, Google Play and the file provider may process data under their own policies.\n\nSupport and privacy inquiries: github.com/junaid-devv/quietdeck-tv-launcher/issues (avoid posting personal data). Security reports: the repository’s private vulnerability reporting.\n\nIf these practices change, this policy and the store disclosures will be updated.</string>
 </resources>

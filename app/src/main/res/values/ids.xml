@@ -1,0 +1,5 @@
+<resources>
+    <item name="nav_home" type="id"/><item name="nav_apps" type="id"/>
+    <item name="nav_settings" type="id"/><item name="app_grid" type="id"/>
+    <item name="app_search" type="id"/><item name="app_options" type="id"/>
+</resources>

@@ -305,7 +305,9 @@ public class MainActivity extends Activity {
         boolean home = page.equals("home"), recent = page.equals("recent");
         ((View) section.getParent()).setVisibility(home ? View.VISIBLE : View.GONE);
         int viewportWidth = getResources().getDisplayMetrics().widthPixels - dp(118 + 9 * (prefs.columns() - 1));
-        int homeRow = viewportWidth / prefs.columns() * 9 / 16 + dp(34 + (prefs.textSize() == 2 ? 8 : 0));
+        int labelSize = new int[]{12, 14, 17}[prefs.textSize()];
+        int labelHeight = Math.max(dp(27), Math.round(labelSize * getResources().getDisplayMetrics().scaledDensity * 1.5f) + dp(7));
+        int homeRow = viewportWidth / prefs.columns() * 9 / 16 + labelHeight + dp(12);
         grid.setLayoutParams(new FrameLayout.LayoutParams(-1, home ? homeRow : -1));
         findViewById(R.id.nav_home).setSelected(home || recent);
         findViewById(R.id.nav_apps).setSelected(page.equals("apps"));

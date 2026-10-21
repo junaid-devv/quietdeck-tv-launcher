@@ -43,6 +43,9 @@ def pull_screenshots():
 if args.expect_16k:
     time.sleep(45)
     (args.output/'pre-test-memory.txt').write_text(adb('shell', 'dumpsys', 'meminfo'), encoding='utf-8')
+    # This is a Google APIs phone image with TV hardware, not TV firmware.
+    # Acknowledge its system immersive-mode tutorial before app UI tests.
+    adb('shell', 'settings', 'put', 'secure', 'immersive_mode_confirmations', 'confirmed')
 
 app = next(args.artifacts.rglob('app-debug.apk'))
 test = next(args.artifacts.rglob('app-debug-androidTest.apk'))

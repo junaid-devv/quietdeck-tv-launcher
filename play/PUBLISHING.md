@@ -18,7 +18,7 @@ This is a **release candidate**, not a production-approved Play release. Do not 
 3. Confirm a live, publicly accessible privacy-policy URL. The prepared URL is `https://junaid-devv.github.io/quietdeck-tv-launcher/privacy.html`; verify it loads before entering it in Console.
 4. Enroll in Play App Signing. Preserve the existing APK app-signing identity if sideload-to-Play updates are required. Follow the Console's key-import instructions privately. The AAB should be signed with a separate upload key. A public certificate is safe to share; private keys and passwords must never enter Git or issue reports.
 5. Upload the upload-key-signed AAB to **internal testing** first. Review App Bundle Explorer, device exclusions, TV opt-in, pre-launch reports and generated APK signatures. Install the Play-delivered build on a physical TV; verify updates from the sideloaded version and settings migration.
-6. Upload genuine, unaltered TV screenshots that show the submitted version. Emulator screenshots in this project are development evidence. Replace them with physical TV captures for the final listing; do not use v1.1 screenshots for v2.
+6. Review the genuine, unaltered Android TV emulator captures supplied with the candidate. They show the current app with separately installed original artwork fixtures, not streaming integrations. Play requires accurate current-version TV screenshots; its TV-G4 rule does not specify physical hardware. Capturing the final setup on physical TVs is recommended during qualification. Do not use v1.1 screenshots for v2.
 
 ## Personal account created after 13 November 2023
 

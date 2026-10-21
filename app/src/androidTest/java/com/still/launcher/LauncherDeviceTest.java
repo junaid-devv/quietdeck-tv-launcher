@@ -69,16 +69,22 @@ public class LauncherDeviceTest {
             scenario.onActivity(activity -> assertEquals("NoMatchingApp123", ((EditText) activity.findViewById(R.id.app_search)).getText().toString()));
         }
     }
-    @Test public void backLeavesOrdinaryLaunchAndRemoteCanNavigate() {
+    @Test public void backLeavesOrdinaryLaunchAndRemoteCanNavigate() throws Exception {
         try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
             scenario.onActivity(activity -> {
                 activity.findViewById(R.id.nav_apps).performClick(); activity.onBackPressed();
             });
             InstrumentationRegistry.getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_DOWN);
             scenario.onActivity(activity -> assertNotNull(activity.getCurrentFocus()));
-            scenario.onActivity(MainActivity::onBackPressed);
-            InstrumentationRegistry.getInstrumentation().waitForIdleSync();
-            assertNotEquals(androidx.lifecycle.Lifecycle.State.RESUMED, scenario.getState());
+            scenario.onActivity(activity -> {
+                activity.onBackPressed();
+                assertTrue("Ordinary Back must finish the Activity", activity.isFinishing());
+            });
+            // finish() schedules a lifecycle transition; an idle main looper
+            // does not guarantee ActivityScenario has observed destruction.
+            for (int attempt = 0; attempt < 100 && scenario.getState() != androidx.lifecycle.Lifecycle.State.DESTROYED; attempt++)
+                Thread.sleep(50);
+            assertEquals(androidx.lifecycle.Lifecycle.State.DESTROYED, scenario.getState());
         }
     }
     @Test public void captureRealEmulatorScreensAndTrimMemory() throws Exception {

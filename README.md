@@ -24,6 +24,10 @@ QuietDeck changes your home screen. Streaming content and subscriptions come fro
 
 ## Screenshots
 
+![QuietDeck v2 Home with proportional artwork](docs/screenshots/v2-emulator/default-home.png)
+
+![QuietDeck v2 app library](docs/screenshots/v2-emulator/default-apps.png)
+
 New-version captures and their exact device/runtime context are documented in [release readiness](docs/RELEASE-READINESS.md). Development emulator images use original fixture apps to exercise square, tall and wide artwork; those fixtures are not included in the launcher. The old Haier captures under `docs/screenshots/` show **v1.1**, not v2. They must not be used in a v2 Play listing.
 
 ## Try it safely

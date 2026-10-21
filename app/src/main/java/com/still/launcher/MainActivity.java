@@ -439,7 +439,7 @@ public class MainActivity extends Activity {
         Uri uri = data.getData();
         if (request == WALLPAPER) {
             try {
-                getContentResolver().takePersistableUriPermission(uri, data.getFlags() & Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 prefs.raw.edit().putString("wallpaper", uri.toString()).apply(); loadWallpaper();
             } catch (RuntimeException denied) { toast(R.string.wallpaper_failed); }
         } else if (request == EXPORT) {

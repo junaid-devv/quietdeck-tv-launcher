@@ -54,7 +54,8 @@ final class AppGridAdapter extends BaseAdapter {
             holder.label.setTextColor(Color.WHITE); holder.label.setSingleLine(true);
             holder.label.setEllipsize(TextUtils.TruncateAt.END);
             holder.label.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
-            holder.root.addView(holder.label, new LinearLayout.LayoutParams(-1, dp(27)));
+            holder.label.setMinHeight(dp(27));
+            holder.root.addView(holder.label, new LinearLayout.LayoutParams(-1, -2));
             holder.root.setTag(holder); convert = holder.root;
         } else holder = (Holder) convert.getTag();
         AppEntry app = getItem(position);

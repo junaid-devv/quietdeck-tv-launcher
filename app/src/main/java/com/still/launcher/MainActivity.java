@@ -217,7 +217,10 @@ public class MainActivity extends Activity {
         super.onTrimMemory(level);
         if (artwork != null) artwork.trim(level >= ComponentCallbacks2.TRIM_MEMORY_BACKGROUND);
         if (level >= ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN && root != null && !resumed) {
-            wallpaperGeneration++; root.setBackground(new DeckBackground(prefs.scene())); wallpaper = null;
+            wallpaperGeneration++;
+            if (wallpaper != null) root.setBackground(prefs.contrast()
+                    ? new ColorDrawable(0xFF05090F) : new DeckBackground(prefs.scene()));
+            wallpaper = null;
         }
     }
     @Override public void onLowMemory() { super.onLowMemory(); if (artwork != null) artwork.clear(); }

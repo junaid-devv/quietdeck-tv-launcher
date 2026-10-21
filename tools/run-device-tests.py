@@ -12,11 +12,29 @@ parser.add_argument('--serial', required=True)
 parser.add_argument('--artifacts', type=Path, required=True)
 parser.add_argument('--output', type=Path, default=Path('device-evidence'))
 parser.add_argument('--display-checks', action='store_true')
+parser.add_argument('--expect-16k', action='store_true')
 args = parser.parse_args()
 args.output.mkdir(parents=True, exist_ok=True)
 
 def adb(*command):
     return subprocess.run(['adb', '-s', args.serial, *command], check=True, capture_output=True, text=True).stdout
+
+def pull_screenshots():
+    listing = subprocess.run(['adb','-s',args.serial,'shell','run-as','com.still.launcher.debug','ls','files/screenshots'],
+                             capture_output=True,text=True)
+    if listing.returncode:
+        (args.output/'screenshot-extraction.txt').write_text(listing.stdout+listing.stderr,encoding='utf-8')
+        return 0
+    folder=args.output/'screenshots'; folder.mkdir(exist_ok=True)
+    count=0
+    for name in listing.stdout.splitlines():
+        name=name.strip()
+        if not re.fullmatch(r'[a-z0-9-]+\.png',name): continue
+        data=subprocess.run(['adb','-s',args.serial,'exec-out','run-as','com.still.launcher.debug','cat','files/screenshots/'+name],
+                            check=True,capture_output=True).stdout
+        if not data.startswith(b'\x89PNG\r\n\x1a\n'): raise SystemExit('Invalid screenshot stream')
+        (folder/name).write_bytes(data); count+=1
+    return count
 
 app = next(args.artifacts.rglob('app-debug.apk'))
 test = next(args.artifacts.rglob('app-debug-androidTest.apk'))
@@ -29,13 +47,15 @@ result = adb('shell', 'am', 'instrument', '-w', '-r',
 (args.output/'instrumentation.txt').write_text(result, encoding='utf-8')
 (args.output/'runtime-log.txt').write_text(adb('shell', 'logcat', '-d', '-s', 'AndroidRuntime:E', 'TestRunner:I'), encoding='utf-8')
 (args.output/'system-log.txt').write_text(adb('shell', 'logcat', '-d'), encoding='utf-8')
-subprocess.run(['adb', '-s', args.serial, 'pull',
-    '/sdcard/Android/data/com.still.launcher.debug/files/screenshots', str(args.output/'screenshots')], check=False)
-(args.output/'page-size.txt').write_text(adb('shell', 'getconf', 'PAGE_SIZE'), encoding='utf-8')
+screenshots=pull_screenshots()
+page_size=adb('shell', 'getconf', 'PAGE_SIZE').strip()
+(args.output/'page-size.txt').write_text(page_size, encoding='utf-8')
+if args.expect_16k and page_size != '16384': raise SystemExit('Expected a real 16 KiB-page runtime')
 if not re.search(r'OK \(\d+ tests?\)', result) or 'FAILURES' in result or 'INSTRUMENTATION_FAILED' in result:
     print(result)
     raise SystemExit('Instrumentation did not pass')
 print(result)
+if screenshots < 2: raise SystemExit('Missing required development screenshots')
 if args.display_checks:
     try:
         for label, size, density, scale in [('720p','1280x720','213','1.0'), ('4k','3840x2160','640','1.0'),
@@ -53,4 +73,4 @@ if args.display_checks:
         adb('shell','wm','size','reset')
         adb('shell','wm','density','reset')
         adb('shell','settings','put','system','font_scale','1.0')
-        subprocess.run(['adb','-s',args.serial,'pull','/sdcard/Android/data/com.still.launcher.debug/files/screenshots',str(args.output/'screenshots')],check=False)
+        pull_screenshots()

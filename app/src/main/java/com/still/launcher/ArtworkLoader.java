@@ -22,6 +22,7 @@ final class ArtworkLoader implements AutoCloseable {
     private final ThreadPoolExecutor worker = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS,
             new ArrayBlockingQueue<>(24), new ThreadPoolExecutor.DiscardOldestPolicy());
     private volatile boolean closed;
+    private volatile int generation;
     private final int width, height;
     ArtworkLoader(Context context, boolean lowRam) {
         pm = context.getApplicationContext().getPackageManager();
@@ -36,10 +37,11 @@ final class ArtworkLoader implements AutoCloseable {
         if (hit != null) { view.setImageBitmap(hit); return; }
         view.setImageDrawable(null);
         WeakReference<ImageView> target = new WeakReference<>(view);
+        int requestGeneration = generation;
         if (closed) return;
         worker.execute(() -> {
             ImageView current = target.get();
-            if (closed || current == null) return;
+            if (closed || current == null || requestGeneration != generation) return;
             Bitmap bitmap = cache.get(app.id);
             try {
                 if (bitmap == null) {
@@ -55,12 +57,14 @@ final class ArtworkLoader implements AutoCloseable {
                     int x = (width - bw) / 2, y = (height - bh) / 2;
                     source.setBounds(x + fit[0], y + fit[1], x + fit[2], y + fit[3]);
                     source.draw(new Canvas(bitmap));
-                    if (!closed) cache.put(app.id, bitmap);
+                    synchronized (cache) {
+                        if (!closed && requestGeneration == generation) cache.put(app.id, bitmap);
+                    }
                 }
                 final Bitmap ready = bitmap;
                 if (!closed) main.post(() -> {
                     ImageView image = target.get();
-                    if (!closed && image != null && app.id.equals(image.getTag())) image.setImageBitmap(ready);
+                    if (!closed && requestGeneration == generation && image != null && app.id.equals(image.getTag())) image.setImageBitmap(ready);
                 });
             } catch (RuntimeException | OutOfMemoryError malformedArtwork) {
                 // A bad app banner must not take down the user's Home screen.
@@ -68,7 +72,10 @@ final class ArtworkLoader implements AutoCloseable {
             }
         });
     }
-    void clear() { cache.evictAll(); worker.getQueue().clear(); }
+    void clear() {
+        synchronized (cache) { generation++; cache.evictAll(); }
+        worker.getQueue().clear();
+    }
     void trim(boolean severe) { if (severe) clear(); else cache.trimToSize(cache.maxSize() / 2); }
     int bytes() { return cache.size(); }
     @Override public void close() { closed = true; worker.shutdownNow(); main.removeCallbacksAndMessages(null); cache.evictAll(); }

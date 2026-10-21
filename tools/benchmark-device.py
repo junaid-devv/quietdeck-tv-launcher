@@ -44,5 +44,6 @@ result = {'package':args.package,'model':adb('shell','getprop','ro.product.model
     'page_size':adb('shell','getconf','PAGE_SIZE').strip(),
     'cold_start_ms':samples,'median_cold_start_ms':statistics.median(samples),
     'method':'am force-stop + am start -W, TotalTime; 2s settling; no installed-app data clearing'}
+if not result['page_size'].isdigit(): result['page_size']='unknown (getconf unavailable)'
 (args.output/'summary.json').write_text(json.dumps(result,indent=2),encoding='utf-8')
 print(json.dumps(result,indent=2))

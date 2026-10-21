@@ -3,6 +3,7 @@ name: Android build
 on:
   push:
     branches: [main, 'release/**']
+    paths-ignore: ['docs/**', '**/*.md', 'play/**']
   pull_request:
   workflow_dispatch:
 
@@ -95,7 +96,7 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -memory ${{ matrix.api == 35 && '3072' || '1024' }}
           script: |
-            python3 tools/run-device-tests.py --serial emulator-5554 --artifacts ci-artifacts --output device-evidence ${{ matrix.api == 30 && '--display-checks' || '' }}
+            python3 tools/run-device-tests.py --serial emulator-5554 --artifacts ci-artifacts --output device-evidence ${{ matrix.api == 30 && '--display-checks' || '' }} ${{ matrix.api == 35 && '--expect-16k' || '' }}
             bash tools/ci-release-check.sh
       - name: Upload TV test evidence
         if: always()

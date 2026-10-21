@@ -119,6 +119,19 @@ public class LauncherDeviceTest {
             });
         }
     }
+    @Test public void highContrastSurvivesBackgroundMemoryTrimming() throws Exception {
+        new PreferencesStore(context).raw.edit().putBoolean("contrast", true).commit();
+        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
+            scenario.moveToState(androidx.lifecycle.Lifecycle.State.STARTED);
+            scenario.onActivity(activity -> activity.onTrimMemory(android.content.ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN));
+            scenario.moveToState(androidx.lifecycle.Lifecycle.State.RESUMED);
+            scenario.onActivity(activity -> {
+                android.view.ViewGroup content = activity.findViewById(android.R.id.content);
+                assertTrue(content.getChildAt(0).getBackground() instanceof android.graphics.drawable.ColorDrawable);
+                assertEquals(0xFF05090F, ((android.graphics.drawable.ColorDrawable) content.getChildAt(0).getBackground()).getColor());
+            });
+        }
+    }
     @Test public void packageRemovalBroadcastRefreshesVisibleApps() throws Exception {
         try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
             awaitArtwork(scenario);
@@ -178,7 +191,7 @@ public class LauncherDeviceTest {
     private void screenshot(String name) throws Exception {
         name = InstrumentationRegistry.getArguments().getString("captureLabel", "default") + "-" + name;
         Bitmap image = InstrumentationRegistry.getInstrumentation().getUiAutomation().takeScreenshot();
-        File folder = new File(context.getExternalFilesDir(null), "screenshots"); assertTrue(folder.exists() || folder.mkdirs());
+        File folder = new File(context.getFilesDir(), "screenshots"); assertTrue(folder.exists() || folder.mkdirs());
         try (FileOutputStream out = new FileOutputStream(new File(folder, name))) { assertTrue(image.compress(Bitmap.CompressFormat.PNG, 100, out)); }
         image.recycle();
     }

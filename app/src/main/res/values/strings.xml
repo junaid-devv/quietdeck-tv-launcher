@@ -5,7 +5,7 @@
     <string name="collections">Collections</string><string name="settings">Settings</string>
     <string name="options">App options</string><string name="inputs">Inputs</string>
     <string name="favourites">Favourites</string><string name="recent">Recently opened</string>
-    <string name="home_title">Good evening.</string><string name="home_subtitle">Your favourites. Nothing in the way.</string>
+    <string name="home_subtitle">Your favourites. Nothing in the way.</string>
     <string name="apps_title">Your apps</string><string name="search_hint">Search your apps</string>
     <string name="search_description">Search installed apps by name</string>
     <plurals name="app_count">

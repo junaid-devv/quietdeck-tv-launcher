@@ -164,7 +164,7 @@ public class MainActivity extends Activity {
         logo.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         identity.addView(logo, new LinearLayout.LayoutParams(dp(21), dp(21)));
         TextView brand = text(s(R.string.brand), 16, 0xFFEEF4F7);
-        brand.setTypeface(android.graphics.Typeface.create("sans-serif-medium", 0)); brand.setPadding(dp(7), 0, 0, 0);
+        brand.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL)); brand.setPadding(dp(7), 0, 0, 0);
         identity.addView(brand);
         FrameLayout.LayoutParams identityLp = new FrameLayout.LayoutParams(-2, -2, Gravity.START | Gravity.CENTER_VERTICAL);
         header.addView(identity, identityLp);
@@ -179,7 +179,7 @@ public class MainActivity extends Activity {
         layout.addView(header, new LinearLayout.LayoutParams(-1, dp(40)));
         date = text("", 11, 0xFFADC4D5); date.setPadding(0, dp(largeFont ? 21 : 40), 0, 0); layout.addView(date);
         title = text("", largeFont ? 32 : 38, 0xFFF3F7FA);
-        title.setTypeface(android.graphics.Typeface.create("sans-serif-light", 0));
+        title.setTypeface(android.graphics.Typeface.create("sans-serif-light", android.graphics.Typeface.NORMAL));
         title.setSingleLine(true); title.setEllipsize(android.text.TextUtils.TruncateAt.END);
         title.setPadding(0, dp(8), 0, 0);
         if (Build.VERSION.SDK_INT >= 28) title.setAccessibilityHeading(true);
@@ -188,7 +188,7 @@ public class MainActivity extends Activity {
         subtitle.setPadding(0, dp(3), 0, 0); layout.addView(subtitle);
         LinearLayout heading = row(); heading.setPadding(0, dp(largeFont ? 22 : 43), 0, dp(14));
         section = text(s(R.string.favourites), 14, 0xFFEEF4F7);
-        section.setTypeface(android.graphics.Typeface.create("sans-serif-medium", 0));
+        section.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
         heading.addView(section, new LinearLayout.LayoutParams(0, -2, 1));
         instruction = text(s(R.string.organise_hint), 10, 0xFF8197A9); heading.addView(instruction);
         layout.addView(heading);

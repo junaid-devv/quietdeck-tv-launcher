@@ -6,6 +6,7 @@ import argparse
 from pathlib import Path
 import re
 import subprocess
+import time
 
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--serial', required=True)
@@ -35,6 +36,13 @@ def pull_screenshots():
         if not data.startswith(b'\x89PNG\r\n\x1a\n'): raise SystemExit('Invalid screenshot stream')
         (folder/name).write_bytes(data); count+=1
     return count
+
+# The Google APIs 16 KiB image starts many system services after boot_completed.
+# Let that first-boot workload settle before instrumenting the app. The 1 GiB
+# Android TV images deliberately retain their smaller, representative budget.
+if args.expect_16k:
+    time.sleep(45)
+    (args.output/'pre-test-memory.txt').write_text(adb('shell', 'dumpsys', 'meminfo'), encoding='utf-8')
 
 app = next(args.artifacts.rglob('app-debug.apk'))
 test = next(args.artifacts.rglob('app-debug-androidTest.apk'))

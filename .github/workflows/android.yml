@@ -91,10 +91,10 @@ jobs:
           target: ${{ matrix.target }}
           arch: ${{ matrix.arch }}
           profile: tv_1080p
-          ram-size: ${{ matrix.api == 35 && '3072M' || '1024M' }}
+          ram-size: ${{ matrix.api == 35 && '4096M' || '1024M' }}
           heap-size: ${{ matrix.api == 35 && '256M' || '128M' }}
           disable-animations: true
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -memory ${{ matrix.api == 35 && '3072' || '1024' }}
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -memory ${{ matrix.api == 35 && '4096' || '1024' }}
           script: |
             python3 tools/run-device-tests.py --serial emulator-5554 --artifacts ci-artifacts --output device-evidence ${{ matrix.api == 30 && '--display-checks' || '' }} ${{ matrix.api == 35 && '--expect-16k' || '' }}
             bash tools/ci-release-check.sh

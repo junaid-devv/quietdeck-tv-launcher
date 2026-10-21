@@ -16,7 +16,7 @@ The emulator screenshot fixtures are original non-functional Music, Cinema and G
 
 ### Signed candidate verification
 
-The distributable APK is **127,903 bytes**; the upload AAB is **130,409 bytes**. Both use R8/resource-shrunk release output from source `e11615b6ffca83b31c7a8bb3760b204f0c21c5d0`, [build 39546042617](https://github.com/junaid-devv/quietdeck-tv-launcher/actions/runs/39546042617). Subsequent test-harness changes do not modify product source.
+The distributable APK is **127,903 bytes**; the upload AAB is **130,410 bytes**. Both use R8/resource-shrunk release output from source `d6812fbbae9974b7fcd80fad8a01ab3620307105`, [build 39570159230](https://github.com/junaid-devv/quietdeck-tv-launcher/actions/runs/39570159230). This build passes the complete device matrix. Its product code matches the earlier candidate; the build metadata records the final tested commit.
 
 - APK signature and zip alignment verified; signing certificate matches the existing v1.1 sideload identity.
 - AAB uses a separate upload key and passes official bundletool 1.18.3 validation.
@@ -28,6 +28,22 @@ The distributable APK is **127,903 bytes**; the upload AAB is **130,409 bytes**.
 Public release files include certificate fingerprints, checksums, R8 mapping, build provenance and verification reports. Private signing material is excluded. Preserve an offline backup of both private signing identities separately.
 
 Current policy references: [TV quality requirements](https://developer.android.com/docs/quality-guidelines/tv-app-quality), [target API rules](https://support.google.com/googleplay/android-developer/answer/11926878), and [new personal-account testing](https://support.google.com/googleplay/android-developer/answer/14151465). Recheck these when submitting.
+
+### Final CI matrix
+
+[Push run 39570159230](https://github.com/junaid-devv/quietdeck-tv-launcher/actions/runs/39570159230) and [independent PR run 39570218024](https://github.com/junaid-devv/quietdeck-tv-launcher/actions/runs/39570218024) both pass all jobs.
+
+| Runtime | Configuration | Device suite | Optimized release smoke |
+| --- | --- | --- | --- |
+| Android TV API 23 x86 | 1 GiB RAM / 128 MiB heap | 10 passed | 5 launches passed |
+| Android TV API 30 x86 | 1 GiB RAM / 128 MiB heap | 10 passed + 3 display captures | 5 launches passed |
+| Google APIs API 35 x86_64 | 4 GiB RAM / 256 MiB heap; verified 16,384-byte pages | 10 passed | 5 launches passed |
+
+API 35 is a generic Google APIs image with a TV hardware profile, not Android TV firmware or a low-RAM qualification. Its first-boot services receive a settling period; its phone-specific immersive-mode tutorial is acknowledged by the CI setup. Android TV uses the original 1 GiB test configuration.
+
+API 30 captures cover 720p, 1080p, large fonts/high contrast and 2160p output with a 1080p logical app surface. See [unaltered screenshots and context](screenshots/v2-emulator/README.md). The initial 640-dpi output override produced a cropped test setup and was corrected to the TV's 320-dpi logical density before qualification.
+
+For reproducibility, the push-run median cold-launch observations were 1,070 ms (API 23), 931 ms (API 30) and 1,038 ms (API 35), from five force-stop/`am start -W` samples including first launch. These are shared-runner emulator observations, not speed claims or physical-TV acceptance thresholds. Raw samples, memory snapshots and instrumentation results are preserved with the prerelease.
 
 ## Physical performance remains pending
 

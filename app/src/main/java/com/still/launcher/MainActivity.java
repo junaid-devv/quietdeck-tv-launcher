@@ -71,9 +71,10 @@ public class MainActivity extends Activity {
     private EditText search;
     private TextView title, subtitle, count, clock, empty;
     private Button favouritesButton, recentButton;
-    private boolean lowRam, resumed, dirty = true, loaded, destroyed;
+    private boolean lowRam, resumed, dirty = true, loaded;
+    private volatile boolean destroyed;
     private String page = "home", group = "", selectedId = "", pendingSelection = "", savedQuery = "";
-    private int wallpaperGeneration;
+    private volatile int wallpaperGeneration;
     private Bitmap wallpaper;
     private final Runnable clockTick = new Runnable() {
         @Override public void run() {
@@ -123,6 +124,7 @@ public class MainActivity extends Activity {
         StateListDrawable background = new StateListDrawable();
         background.addState(new int[]{android.R.attr.state_focused}, AppGridAdapter.shape(0xFF315B64, 0xFFB6EFE8));
         background.addState(new int[]{android.R.attr.state_pressed}, AppGridAdapter.shape(0xFF315B64, 0xFFB6EFE8));
+        background.addState(new int[]{android.R.attr.state_selected}, AppGridAdapter.shape(0x99304F5B, 0x6665A7A3));
         background.addState(new int[]{}, AppGridAdapter.shape(0x661B2D3B, 0)); button.setBackground(background);
         button.setStateListAnimator(null); button.setOnClickListener(v -> action.run());
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-2, dp(40)); lp.setMarginEnd(dp(8));
@@ -141,7 +143,7 @@ public class MainActivity extends Activity {
         header.addView(brand);
         Button homeButton = button(R.string.home, () -> showPage("home", "")); homeButton.setId(R.id.nav_home); header.addView(homeButton);
         Button appsButton = button(R.string.apps, () -> showPage("apps", "")); appsButton.setId(R.id.nav_apps); header.addView(appsButton);
-        header.addView(button(R.string.collections, this::showCollections));
+        Button collectionsButton = button(R.string.collections, this::showCollections); collectionsButton.setId(R.id.nav_collections); header.addView(collectionsButton);
         Button settingsButton = button(R.string.settings, this::showSettings); settingsButton.setId(R.id.nav_settings); header.addView(settingsButton);
         clock = text("", 18, 0xFFDDECEB); clock.setGravity(Gravity.END);
         header.addView(clock, new LinearLayout.LayoutParams(0, -2, 1));
@@ -201,6 +203,7 @@ public class MainActivity extends Activity {
         main.removeCallbacks(clockTick); main.post(clockTick);
         if (wallpaper == null && !prefs.raw.getString("wallpaper", "").isEmpty()) loadWallpaper();
         if (dirty || !loaded) refreshApps();
+        else render();
     }
     @Override protected void onPause() {
         resumed = false; main.removeCallbacks(clockTick); super.onPause();
@@ -254,6 +257,10 @@ public class MainActivity extends Activity {
     private void render() {
         if (adapter == null) return;
         boolean home = page.equals("home"), recent = page.equals("recent");
+        findViewById(R.id.nav_home).setSelected(home || recent);
+        findViewById(R.id.nav_apps).setSelected(page.equals("apps"));
+        findViewById(R.id.nav_collections).setSelected(page.equals("group"));
+        favouritesButton.setSelected(home); recentButton.setSelected(recent);
         title.setText(home || recent ? s(R.string.home_title) : page.equals("group") ? group : s(R.string.apps_title));
         subtitle.setText(home || recent ? s(R.string.home_subtitle) : page.equals("group") ? s(R.string.collections) : s(R.string.apps));
         favouritesButton.setVisibility(home || recent ? View.VISIBLE : View.GONE);
@@ -424,7 +431,7 @@ public class MainActivity extends Activity {
         if (!search.getText().toString().isEmpty()) { search.setText(""); focusAppsOrHome(); }
         else if (!page.equals("home")) showPage("home", "");
         else if (isDefaultHome()) { grid.setSelection(0); focusAppsOrHome(); }
-        else super.onBackPressed();
+        else finish();
     }
     @Override public boolean onKeyDown(int code, KeyEvent event) {
         if (code == KeyEvent.KEYCODE_MENU || code == KeyEvent.KEYCODE_INFO) {
@@ -494,6 +501,7 @@ public class MainActivity extends Activity {
         if (value.isEmpty() || prefs.contrast()) return;
         files.execute(() -> {
             try {
+                if (destroyed || generation != wallpaperGeneration) return;
                 Uri uri = Uri.parse(value); BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inJustDecodeBounds = true;
                 try (InputStream input = getContentResolver().openInputStream(uri)) { BitmapFactory.decodeStream(input, null, options); }
@@ -502,6 +510,7 @@ public class MainActivity extends Activity {
                 options.inSampleSize = 1;
                 while (Math.max(options.outWidth, options.outHeight) / options.inSampleSize > max) options.inSampleSize *= 2;
                 options.inJustDecodeBounds = false; options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                if (destroyed || generation != wallpaperGeneration) return;
                 Bitmap image;
                 try (InputStream input = getContentResolver().openInputStream(uri)) { image = BitmapFactory.decodeStream(input, null, options); }
                 if (image == null) throw new IllegalArgumentException();

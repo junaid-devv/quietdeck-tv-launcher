@@ -28,7 +28,7 @@ QuietDeck reads labels and artwork from each installed package. OEM shortcut app
 
 ## My favourite disappeared
 
-Hiding an app hides it from Home too. Use Appearance → Restore hidden apps. If it was removed from favourites, open Apps, hold OK or press Menu, and choose Add to favourites. Uninstalled apps cannot be launched.
+Hiding an app hides it from Home too. Use Settings → Restore hidden apps. If it was removed from favourites, open Apps, hold OK or press Menu, and choose Add to favourites. Uninstalled apps cannot be launched.
 
 ## Inputs does not open the source selector
 
@@ -36,7 +36,7 @@ Manufacturers use different input settings interfaces. If the standard intent is
 
 ## Can I use my own wallpaper, channels, or widgets?
 
-Version 1.1.0 offers three built-in backgrounds. Custom wallpapers, content rows, widgets, and a universal search feature are not implemented. See the [roadmap](ROADMAP.md).
+The 2.0 candidate includes three built-in scenes, local wallpaper through a compatible Android document picker, named collections and app-name search. Content feeds and Android widgets are not implemented. Wallpaper access and file pickers depend on the TV. The stable v1.1 release only has built-in scenes.
 
 ## How do I update or uninstall?
 

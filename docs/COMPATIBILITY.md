@@ -1,17 +1,15 @@
-# Device compatibility
+# Compatibility and qualification
 
-QuietDeck TV declares Android 6.0/API 23 as its minimum and targets Android 15/API 35. This describes its build configuration, not a claim that every TV or Android version has been tested.
+The release declares Android TV 6.0 / API 23 minimum and target API 35, with required Leanback support and no touchscreen requirement. Java-only bytecode has no bundled native ABI restriction. These declarations describe packaging support; device qualification is recorded separately.
 
-| Device / software | Status | Evidence and limits |
+| Environment | Version | Evidence / limits |
 | --- | --- | --- |
-| Haier Android TV, model reported as `haierATVnippori` | Physically tested | Android 11/API 30; reported 1280 × 720 output, density 213. Native home rendering, app discovery, D-pad movement, app-grid scrolling, Menu options, favourites persistence across a cold launch, app launching, and Home return were exercised. |
-| Haier stock Android TV Home | Workaround verified | Default-home selection alone did not override the system launcher. Disabling its package for user 0 allowed QuietDeck to handle Home. Package retained for restoration. |
-| Other Android TV manufacturers / boxes | Unverified | API-compatible in principle; input settings, app artwork and Home-button behavior vary. |
-| Google TV devices | Unverified | May accept sideloading but enforce different Home-launcher restrictions. No universal Home override is promised. |
-| Samsung Tizen / LG webOS | Unsupported | Not Android application platforms. |
+| Physical Haier Android 11, low-RAM, 720p | v1.1.0 | Earlier installation, launch, favourites, grid and Home return checks; not v2 qualification |
+| Android TV API 23 x86 emulator, 1 GiB | v2 candidate | Instrumentation results linked in release readiness |
+| Android TV API 30 x86 emulator, 1 GiB | v2 candidate | Instrumentation results linked in release readiness |
+| Android API 35 x86_64 16 KiB-page image, TV display profile | v2 candidate | Modern runtime check; this image is not certified Google TV firmware |
+| Physical low-RAM Haier / other Android TV / Google TV | v2 candidate | Pending; TV was unavailable during preparation |
 
-No TV reboot was performed in the original test session. Post-reboot behavior and the physical remote's long-press timing still need device reports. The Menu-key route to app options was tested.
+TV manufacturers control Home selection, input settings, installed-app visibility, storage providers and standby behavior. A working standard intent on one device does not establish support on others. Optional features show an explanation when unavailable. The launcher can still open apps without replacing the Home button.
 
-## Share a device result
-
-Use the [device compatibility form](https://github.com/junaid-devv/quietdeck-tv-launcher/issues/new?template=device-report.yml). Include the brand/model, Android version, app version, what works, and whether a Home workaround was needed. Do not post pairing codes, private IP addresses, serial numbers, account details, or screenshots containing personal information.
+Please report model, Android version, app version, display resolution, remote type, reproduction steps and sanitized logs in a [device result](https://github.com/junaid-devv/quietdeck-tv-launcher/issues/new/choose). Never post ADB pairing codes, account credentials or signing keys.

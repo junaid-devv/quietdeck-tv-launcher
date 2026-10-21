@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.EditText;
 import android.widget.GridView;
 import androidx.test.core.app.ActivityScenario;
@@ -89,6 +90,74 @@ public class LauncherDeviceTest {
             awaitArtwork(scenario); screenshot("home.png");
         }
     }
+    @Test public void visibleAppOptionsHideAndSettingsRestoreAnApp() throws Exception {
+        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
+            awaitArtwork(scenario);
+            scenario.onActivity(activity -> activity.findViewById(R.id.app_options).performClick());
+            clickText(context.getString(R.string.hide_app));
+            assertTrue(new PreferencesStore(context).hidden().contains("com.quietdeck.fixture.cinema"));
+            scenario.onActivity(activity -> {
+                assertEquals(2, ((GridView) activity.findViewById(R.id.app_grid)).getCount());
+                activity.findViewById(R.id.nav_settings).performClick();
+            });
+            clickText(context.getString(R.string.restore_hidden));
+            assertTrue(new PreferencesStore(context).hidden().isEmpty());
+            awaitArtwork(scenario);
+        }
+    }
+    @Test public void firstRunGuidanceIsDismissibleAndRetained() throws Exception {
+        new PreferencesStore(context).raw.edit().clear().commit();
+        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
+            clickText(context.getString(R.string.later));
+            assertTrue(new PreferencesStore(context).raw.getBoolean("onboarded", false));
+            scenario.recreate();
+            scenario.onActivity(activity -> {
+                activity.findViewById(R.id.nav_apps).performClick();
+                assertTrue(activity.findViewById(R.id.nav_home).isFocusable());
+            });
+        }
+    }
+    @Test public void packageRemovalBroadcastRefreshesVisibleApps() throws Exception {
+        try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
+            awaitArtwork(scenario);
+            try {
+                shell("pm disable-user --user 0 com.quietdeck.fixture.cinema");
+                AtomicBoolean removed = new AtomicBoolean();
+                for (int attempt = 0; attempt < 100 && !removed.get(); attempt++) {
+                    scenario.onActivity(activity -> {
+                        AppGridAdapter adapter = (AppGridAdapter) ((GridView) activity.findViewById(R.id.app_grid)).getAdapter();
+                        boolean found = false;
+                        for (int i = 0; i < adapter.getCount(); i++) if (adapter.getItem(i).id.equals("com.quietdeck.fixture.cinema")) found = true;
+                        removed.set(!found);
+                    });
+                    if (!removed.get()) Thread.sleep(50);
+                }
+                assertTrue("Disabled app remained visible", removed.get());
+            } finally { shell("pm enable --user 0 com.quietdeck.fixture.cinema"); }
+        }
+    }
+    private void shell(String command) throws Exception {
+        try (android.os.ParcelFileDescriptor result = InstrumentationRegistry.getInstrumentation().getUiAutomation().executeShellCommand(command);
+             java.io.InputStream input = new android.os.ParcelFileDescriptor.AutoCloseInputStream(result)) {
+            byte[] buffer = new byte[1024]; while (input.read(buffer) != -1) { }
+        }
+    }
+    private void clickText(String label) throws Exception {
+        for (int attempt = 0; attempt < 100; attempt++) {
+            AccessibilityNodeInfo root = InstrumentationRegistry.getInstrumentation().getUiAutomation().getRootInActiveWindow();
+            if (root != null) {
+                for (AccessibilityNodeInfo node : root.findAccessibilityNodeInfosByText(label)) {
+                    if (!label.contentEquals(node.getText() == null ? "" : node.getText())) continue;
+                    while (!node.isClickable() && node.getParent() != null) node = node.getParent();
+                    if (node.performAction(AccessibilityNodeInfo.ACTION_CLICK)) {
+                        InstrumentationRegistry.getInstrumentation().waitForIdleSync(); return;
+                    }
+                }
+            }
+            Thread.sleep(50);
+        }
+        fail("Visible action not reachable through accessibility: " + label);
+    }
     private void awaitArtwork(ActivityScenario<MainActivity> scenario) throws Exception {
         AtomicBoolean ready = new AtomicBoolean();
         for (int attempt = 0; attempt < 100 && !ready.get(); attempt++) {
@@ -102,6 +171,7 @@ public class LauncherDeviceTest {
         }
         assertTrue("Installed fixture artwork did not load", ready.get());
         InstrumentationRegistry.getInstrumentation().waitForIdleSync();
+        InstrumentationRegistry.getInstrumentation().getUiAutomation().waitForIdle(250, 5000);
     }
     private void screenshot(String name) throws Exception {
         Bitmap image = InstrumentationRegistry.getInstrumentation().getUiAutomation().takeScreenshot();

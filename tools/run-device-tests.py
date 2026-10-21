@@ -26,6 +26,7 @@ for apk in sorted(args.artifacts.rglob('showcase-*-debug.apk')):
 result = adb('shell', 'am', 'instrument', '-w', '-r',
              'com.still.launcher.debug.test/androidx.test.runner.AndroidJUnitRunner')
 (args.output/'instrumentation.txt').write_text(result, encoding='utf-8')
+(args.output/'runtime-log.txt').write_text(adb('shell', 'logcat', '-d', '-s', 'AndroidRuntime:E', 'TestRunner:I'), encoding='utf-8')
 subprocess.run(['adb', '-s', args.serial, 'pull',
     '/sdcard/Android/data/com.still.launcher.debug/files/screenshots', str(args.output/'screenshots')], check=False)
 (args.output/'page-size.txt').write_text(adb('shell', 'getconf', 'PAGE_SIZE'), encoding='utf-8')

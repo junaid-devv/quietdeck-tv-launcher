@@ -117,6 +117,7 @@ public class MainActivity extends Activity {
     }
     private Button button(int label, Runnable action) {
         Button button = new Button(this); button.setText(label); button.setAllCaps(false); button.setTextSize(13);
+        button.setFocusableInTouchMode(true);
         button.setTextColor(Color.WHITE); button.setMinHeight(0); button.setMinimumHeight(0); button.setMinWidth(0);
         button.setPadding(dp(14), dp(6), dp(14), dp(6));
         StateListDrawable background = new StateListDrawable();
@@ -245,7 +246,10 @@ public class MainActivity extends Activity {
     private void showPage(String page, String collection) {
         this.page = page; group = collection; selectedId = ""; pendingSelection = ""; search.setText("");
         ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(search.getWindowToken(), 0);
-        render(); grid.setSelection(0); grid.requestFocus();
+        render(); grid.setSelection(0); focusAppsOrHome();
+    }
+    private void focusAppsOrHome() {
+        if (adapter.getCount() == 0 || !grid.requestFocus()) findViewById(R.id.nav_home).requestFocus();
     }
     private void render() {
         if (adapter == null) return;
@@ -264,11 +268,12 @@ public class MainActivity extends Activity {
         String query = search.getText().toString().trim().toLowerCase(Locale.getDefault());
         if (!query.isEmpty()) {
             List<AppEntry> filtered = new ArrayList<>();
-            for (AppEntry app : visible) if (app.label.toLowerCase(Locale.getDefault()).contains(query)) filtered.add(app);
+            for (AppEntry app : available.values()) if (app.label.toLowerCase(Locale.getDefault()).contains(query)) filtered.add(app);
             visible = filtered;
         }
         String retain = !pendingSelection.isEmpty() ? pendingSelection : selectedId;
-        adapter.submit(visible); count.setText(!loaded ? s(R.string.loading) : s(R.string.app_count, visible.size()));
+        adapter.submit(visible); count.setText(!loaded ? s(R.string.loading)
+                : getResources().getQuantityString(R.plurals.app_count, visible.size(), visible.size()));
         empty.setText(!loaded ? s(R.string.loading) : s(R.string.empty) + "\n\n" + s(R.string.empty_hint));
         selectedId = "";
         for (int i = 0; i < visible.size(); i++) if (visible.get(i).id.equals(retain)) { grid.setSelection(i); selectedId = retain; break; }
@@ -358,26 +363,26 @@ public class MainActivity extends Activity {
                 R.string.clear_recent, R.string.privacy, R.string.about};
         String[] labels = new String[ids.length]; for (int i = 0; i < ids.length; i++) labels[i] = s(ids[i]);
         new AlertDialog.Builder(this).setTitle(R.string.settings).setItems(labels, (d, which) -> {
-            switch (ids[which]) {
-                case R.string.choose_favourites: chooseFavourites(); break;
-                case R.string.background: chooseSetting(R.string.background, "scene", new int[]{R.string.blue_hour, R.string.warm_dusk, R.string.midnight}, prefs.scene()); break;
-                case R.string.grid_size: chooseSetting(R.string.grid_size, "density", new int[]{R.string.large_tiles, R.string.balanced_tiles, R.string.compact_tiles}, prefs.density()); break;
-                case R.string.text_size: chooseSetting(R.string.text_size, "textSize", new int[]{R.string.small_text, R.string.normal_text, R.string.large_text}, prefs.textSize()); break;
-                case R.string.high_contrast:
+            switch (which) {
+                case 0: chooseFavourites(); break;
+                case 1: chooseSetting(R.string.background, "scene", new int[]{R.string.blue_hour, R.string.warm_dusk, R.string.midnight}, prefs.scene()); break;
+                case 2: chooseSetting(R.string.grid_size, "density", new int[]{R.string.large_tiles, R.string.balanced_tiles, R.string.compact_tiles}, prefs.density()); break;
+                case 3: chooseSetting(R.string.text_size, "textSize", new int[]{R.string.small_text, R.string.normal_text, R.string.large_text}, prefs.textSize()); break;
+                case 4:
                     new AlertDialog.Builder(this).setTitle(R.string.high_contrast)
                             .setSingleChoiceItems(new String[]{s(R.string.off), s(R.string.on)}, prefs.contrast() ? 1 : 0, (dialog, pick) -> {
                                 prefs.raw.edit().putBoolean("contrast", pick == 1).apply(); dialog.dismiss(); rebuildScreen();
                             }).setNegativeButton(R.string.cancel, null).show(); break;
-                case R.string.local_wallpaper: pickFile(WALLPAPER); break;
-                case R.string.remove_wallpaper: prefs.raw.edit().remove("wallpaper").apply(); loadWallpaper(); break;
-                case R.string.restore_hidden: prefs.restoreHidden(); render(); toast(R.string.hidden_restored); break;
-                case R.string.default_home: chooseDefaultHome(); break;
-                case R.string.settings: safeStart(new Intent(Settings.ACTION_SETTINGS), R.string.settings_unavailable); break;
-                case R.string.refresh: artwork.clear(); refreshApps(); break;
-                case R.string.export_config: pickFile(EXPORT); break;
-                case R.string.import_config: pickFile(IMPORT); break;
-                case R.string.clear_recent: prefs.raw.edit().remove("recent").apply(); render(); toast(R.string.recent_cleared); break;
-                case R.string.privacy: showText(R.string.privacy, s(R.string.policy_text)); break;
+                case 5: pickFile(WALLPAPER); break;
+                case 6: replaceWallpaper(null); break;
+                case 7: prefs.restoreHidden(); render(); toast(R.string.hidden_restored); break;
+                case 8: chooseDefaultHome(); break;
+                case 9: safeStart(new Intent(Settings.ACTION_SETTINGS), R.string.settings_unavailable); break;
+                case 10: artwork.clear(); refreshApps(); break;
+                case 11: pickFile(EXPORT); break;
+                case 12: pickFile(IMPORT); break;
+                case 13: prefs.raw.edit().remove("recent").apply(); render(); toast(R.string.recent_cleared); break;
+                case 14: showText(R.string.privacy, s(R.string.policy_text)); break;
                 default: showText(R.string.about, s(R.string.about_text, s(R.string.version_name), artwork.bytes() / 1024, s(lowRam ? R.string.on : R.string.off)));
             }
         }).setNegativeButton(R.string.close, null).show();
@@ -390,7 +395,7 @@ public class MainActivity extends Activity {
     }
     private void rebuildScreen() {
         pendingSelection = selectedId; savedQuery = search.getText().toString(); buildScreen();
-        main.removeCallbacks(clockTick); main.post(clockTick); grid.requestFocus();
+        main.removeCallbacks(clockTick); main.post(clockTick); focusAppsOrHome();
     }
     private void showText(int title, String value) {
         ScrollView scroll = new ScrollView(this); TextView copy = text(value, 16, Color.WHITE);
@@ -416,9 +421,9 @@ public class MainActivity extends Activity {
         return home != null && home.activityInfo != null && getPackageName().equals(home.activityInfo.packageName);
     }
     @Override public void onBackPressed() {
-        if (!search.getText().toString().isEmpty()) { search.setText(""); grid.requestFocus(); }
+        if (!search.getText().toString().isEmpty()) { search.setText(""); focusAppsOrHome(); }
         else if (!page.equals("home")) showPage("home", "");
-        else if (isDefaultHome()) { grid.setSelection(0); grid.requestFocus(); }
+        else if (isDefaultHome()) { grid.setSelection(0); focusAppsOrHome(); }
         else super.onBackPressed();
     }
     @Override public boolean onKeyDown(int code, KeyEvent event) {
@@ -433,6 +438,16 @@ public class MainActivity extends Activity {
         if (request == EXPORT) intent.putExtra(Intent.EXTRA_TITLE, "QuietDeck-settings.json");
         try { startActivityForResult(intent, request); } catch (RuntimeException missingPicker) { toast(R.string.picker_unavailable); }
     }
+    private void replaceWallpaper(Uri next) {
+        String previous = prefs.raw.getString("wallpaper", "");
+        if (next == null) prefs.raw.edit().remove("wallpaper").apply();
+        else prefs.raw.edit().putString("wallpaper", next.toString()).apply();
+        if (!previous.isEmpty() && (next == null || !previous.equals(next.toString()))) {
+            try { getContentResolver().releasePersistableUriPermission(Uri.parse(previous), Intent.FLAG_GRANT_READ_URI_PERMISSION); }
+            catch (RuntimeException revoked) { /* The provider may already have revoked access. */ }
+        }
+        loadWallpaper();
+    }
     @Override protected void onActivityResult(int request, int result, Intent data) {
         super.onActivityResult(request, result, data);
         if (result != RESULT_OK || data == null || data.getData() == null) return;
@@ -440,7 +455,7 @@ public class MainActivity extends Activity {
         if (request == WALLPAPER) {
             try {
                 getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                prefs.raw.edit().putString("wallpaper", uri.toString()).apply(); loadWallpaper();
+                replaceWallpaper(uri);
             } catch (RuntimeException denied) { toast(R.string.wallpaper_failed); }
         } else if (request == EXPORT) {
             final String json;

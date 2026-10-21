@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicBoolean;
 import static org.junit.Assert.*;
 
 @RunWith(AndroidJUnit4.class)
@@ -24,7 +25,9 @@ public class LauncherDeviceTest {
     private Context context;
     @Before public void setup() {
         context = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        new PreferencesStore(context).raw.edit().putBoolean("onboarded", true).commit();
+        PreferencesStore prefs = new PreferencesStore(context);
+        prefs.raw.edit().clear().putBoolean("onboarded", true).commit();
+        prefs.favourites(Arrays.asList("com.quietdeck.fixture.cinema", "com.quietdeck.fixture.music", "com.quietdeck.fixture.games"));
     }
     @Test public void legacyPreferencesAndImportRoundTripPreserveOrder() throws Exception {
         PreferencesStore store = new PreferencesStore(context, "test-config"); store.raw.edit().clear().commit();
@@ -67,10 +70,9 @@ public class LauncherDeviceTest {
         try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
             scenario.onActivity(activity -> {
                 activity.findViewById(R.id.nav_apps).performClick(); activity.onBackPressed();
-                activity.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN));
-                activity.dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_DOWN));
-                assertNotNull(activity.getCurrentFocus());
             });
+            InstrumentationRegistry.getInstrumentation().sendKeyDownUpSync(KeyEvent.KEYCODE_DPAD_DOWN);
+            scenario.onActivity(activity -> assertNotNull(activity.getCurrentFocus()));
             scenario.onActivity(MainActivity::onBackPressed);
             InstrumentationRegistry.getInstrumentation().waitForIdleSync();
             assertNotEquals(androidx.lifecycle.Lifecycle.State.RESUMED, scenario.getState());
@@ -79,13 +81,27 @@ public class LauncherDeviceTest {
     @Test public void captureRealEmulatorScreensAndTrimMemory() throws Exception {
         try (ActivityScenario<MainActivity> scenario = ActivityScenario.launch(MainActivity.class)) {
             scenario.onActivity(activity -> activity.findViewById(R.id.nav_apps).performClick());
-            InstrumentationRegistry.getInstrumentation().waitForIdleSync(); screenshot("apps.png");
+            awaitArtwork(scenario); screenshot("apps.png");
             scenario.onActivity(activity -> {
                 activity.onTrimMemory(android.content.ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW);
                 activity.findViewById(R.id.nav_home).performClick();
             });
-            InstrumentationRegistry.getInstrumentation().waitForIdleSync(); screenshot("home.png");
+            awaitArtwork(scenario); screenshot("home.png");
         }
+    }
+    private void awaitArtwork(ActivityScenario<MainActivity> scenario) throws Exception {
+        AtomicBoolean ready = new AtomicBoolean();
+        for (int attempt = 0; attempt < 100 && !ready.get(); attempt++) {
+            scenario.onActivity(activity -> {
+                GridView grid = activity.findViewById(R.id.app_grid);
+                if (grid.getCount() < 3 || grid.getChildCount() == 0) return;
+                android.view.ViewGroup tile = (android.view.ViewGroup) grid.getChildAt(0);
+                ready.set(((android.widget.ImageView) tile.getChildAt(0)).getDrawable() != null);
+            });
+            if (!ready.get()) Thread.sleep(50);
+        }
+        assertTrue("Installed fixture artwork did not load", ready.get());
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
     }
     private void screenshot(String name) throws Exception {
         Bitmap image = InstrumentationRegistry.getInstrumentation().getUiAutomation().takeScreenshot();
